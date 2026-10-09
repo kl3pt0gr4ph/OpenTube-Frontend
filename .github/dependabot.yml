@@ -16,36 +16,38 @@ updates:
     ignore:
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
     groups:
       svelte:
         patterns:
           - 'svelte'
           - 'svelte-check'
-          - '@sveltejs/*'
+          - '@sveltejs*'
       vite:
         patterns:
           - 'vite'
           - 'vitest'
-          - '@vitest/*'
+          - '@vitest*'
           - 'vitest-browser-svelte'
       playwright:
         patterns:
           - 'playwright'
-          - '@playwright/*'
+          - '@playwright*'
       testing-library:
         patterns:
-          - '@testing-library/*'
+          - '@testing-library*'
           - 'jsdom'
       tailwind:
         patterns:
           - 'tailwindcss'
-          - '@tailwindcss/*'
+          - '@tailwindcss*'
           - 'prettier-plugin-tailwindcss'
       lint-and-format:
         patterns:
           - 'eslint'
           - 'eslint-*'
-          - '@eslint/*'
+          - '@eslint*'
           - 'typescript-eslint'
           - 'globals'
           - 'prettier'
