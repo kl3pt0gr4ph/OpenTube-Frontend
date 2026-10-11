@@ -6,6 +6,8 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-11
+
 ### Added
 
 - Related items on the video page now render playlists and channels alongside videos, not just videos ([#57])
@@ -65,7 +67,8 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Navigating between videos reloads the player in place instead of rebuilding it.
 - Fixed a teardown race condition that could produce intermittent errors when navigating away from a video.
 
-[Unreleased]: https://github.com/VimVoyager/OpenTube-Frontend/compare/v0.3.0...HEAD
-[0.3.0]: https://github.com/VimVoyager/OpenTube-Frontend/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/VimVoyager/OpenTube-Frontend/compare/v0.1.1...v0.2.0
-[0.1.1]: https://github.com/VimVoyager/OpenTube-Frontend/compare/v0.1.0...v0.1.1
+[Unreleased]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.1.0...v0.1.1
