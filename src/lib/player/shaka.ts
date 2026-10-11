@@ -6,6 +6,15 @@ export interface ShakaError {
 	data: unknown[];
 }
 
+export interface ShakaVideoPreference {
+	label?: string;
+	role?: string;
+	language?: string;
+	codec?: string;
+	hdrLevel?: string;
+	layout?: string;
+}
+
 export interface ShakaAudioPreference {
 	language?: string;
 	role?: string;
@@ -34,6 +43,7 @@ export interface ShakaPlayerConfiguration {
 			maxHeight?: number;
 		};
 	};
+	preferredVideo?: ShakaVideoPreference[];
 	preferredAudio?: ShakaAudioPreference[];
 	preferredText?: ShakaTextPreference[];
 	drm?: Record<string, unknown>;
@@ -50,6 +60,7 @@ export interface ShakaUIConfiguration {
 	controlPanelElements?: string[];
 	addSeekBar?: boolean;
 	addBigPlayButton?: boolean;
+	// bigButtons?: string[];
 	trackLabelFormat?: number;
 	textTrackLabelFormat?: number;
 	showAudioCodec?: boolean;
@@ -119,6 +130,7 @@ export interface ShakaPlayerInstance {
 	getTextTracks(): ShakaTrack[];
 	isTextTrackVisible(): boolean;
 	setTextTrackVisibility(visible: boolean): Promise<void> | void;
+	getStats(): { estimatedBandwidth: number; streamBandwidth: number };
 }
 
 export interface ShakaUIOverlayClass {

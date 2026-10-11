@@ -18,6 +18,7 @@ const mockPlayerInstance = {
 	setTextTrackVisibility: vi.fn().mockResolvedValue(undefined),
 	isTextTrackVisible: vi.fn(() => false),
 	getTextTracks: vi.fn((): { active: boolean; language: string }[] => []),
+	getStats: vi.fn(() => ({ estimatedBandwidth: NaN, streamBandwidth: 0 })),
 	getNetworkingEngine: vi.fn(() => mockNetworkingEngine),
 	addEventListener: vi.fn(),
 	removeEventListener: vi.fn(),
@@ -64,6 +65,10 @@ class MockShakaPlayer {
 
 	getTextTracks() {
 		return mockPlayerInstance.getTextTracks();
+	}
+
+	getStats() {
+		return mockPlayerInstance.getStats();
 	}
 
 	getNetworkingEngine() {
@@ -208,6 +213,7 @@ describe('VideoPlayer.svelte', () => {
 		mockPlayerInstance.setTextTrackVisibility.mockResolvedValue(undefined);
 		mockPlayerInstance.isTextTrackVisible.mockReturnValue(false);
 		mockPlayerInstance.getTextTracks.mockReturnValue([]);
+		mockPlayerInstance.getStats.mockReturnValue({ estimatedBandwidth: NaN, streamBandwidth: 0 });
 		mockPlayerInstance.destroy.mockImplementation(() => Promise.resolve());
 		mockPlayerInstance.getNetworkingEngine.mockReturnValue(mockNetworkingEngine);
 	});
@@ -250,6 +256,7 @@ describe('VideoPlayer.svelte', () => {
 
 					expect(uiConfig.addSeekBar).toBe(true);
 					expect(uiConfig.addBigPlayButton).toBe(true);
+					// expect(uiConfig.bigButtons).toEqual(['play_pause_buffering']);
 
 					// Control panel elements
 					const expectedControls = [
@@ -420,6 +427,22 @@ describe('VideoPlayer.svelte', () => {
 			await waitFor(() =>
 				expect(mockPlayerInstance.setTextTrackVisibility).toHaveBeenCalledWith(true)
 			);
+		});
+
+		it('remembers the measured bandwidth when the next video loads', async () => {
+			const { rerender } = await renderAndWaitForInit();
+			mockPlayerInstance.getStats.mockReturnValue({
+				estimatedBandwidth: 12_345_678,
+				streamBandwidth: 0
+			});
+
+			await rerender({ config: { ...mockConfig, manifestUrl: 'blob:http://localhost:5173/next' } });
+
+			await waitFor(() => expect(loadPreferences().bandwidthEstimate).toBe(12_345_678));
+			const nextConfig = mockPlayerInstance.configure.mock.calls.at(-1)![0] as {
+				abr: { defaultBandwidthEstimate: number };
+			};
+			expect(nextConfig.abr.defaultBandwidthEstimate).toBe(12_345_678);
 		});
 
 		it('leaves subtitles off when no subtitle language is stored', async () => {

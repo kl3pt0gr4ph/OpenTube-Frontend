@@ -38,7 +38,12 @@ describe('loadPreferences', () => {
 			JSON.stringify({ maxHeight: 720, audioLanguage: 'de', textLanguage: 'en' })
 		);
 
-		expect(loadPreferences()).toEqual({ maxHeight: 720, audioLanguage: 'de', textLanguage: 'en' });
+		expect(loadPreferences()).toEqual({
+			...DEFAULT_PREFERENCES,
+			maxHeight: 720,
+			audioLanguage: 'de',
+			textLanguage: 'en'
+		});
 	});
 
 	it.each([
@@ -48,7 +53,8 @@ describe('loadPreferences', () => {
 			'wrong field types',
 			JSON.stringify({ maxHeight: '720', audioLanguage: 1, textLanguage: null })
 		],
-		['a non-positive height', JSON.stringify({ maxHeight: 0 })]
+		['a non-positive height', JSON.stringify({ maxHeight: 0 })],
+		['a non-positive bandwidth estimate', JSON.stringify({ bandwidthEstimate: -1 })]
 	])('falls back to defaults for %s', (_name, raw) => {
 		localStorage.setItem(PREFERENCES_STORAGE_KEY, raw);
 
@@ -65,21 +71,23 @@ describe('savePreferences', () => {
 		savePreferences({ audioLanguage: 'de' });
 		savePreferences({ textLanguage: 'en' });
 
-		expect(loadPreferences()).toEqual({ maxHeight: null, audioLanguage: 'de', textLanguage: 'en' });
+		expect(loadPreferences()).toEqual({
+			...DEFAULT_PREFERENCES,
+			audioLanguage: 'de',
+			textLanguage: 'en'
+		});
 	});
 
 	it('returns the merged preferences', () => {
-		expect(savePreferences({ maxHeight: 1080 })).toEqual({
-			maxHeight: 1080,
-			audioLanguage: '',
-			textLanguage: ''
+		expect(savePreferences({ ...DEFAULT_PREFERENCES, maxHeight: 1080 })).toEqual({
+			...DEFAULT_PREFERENCES,
+			maxHeight: 1080
 		});
 	});
 
 	it('still returns the merged value when storage throws', () => {
 		expect(savePreferences({ textLanguage: 'fr' }, throwingStorage)).toEqual({
-			maxHeight: null,
-			audioLanguage: '',
+			...DEFAULT_PREFERENCES,
 			textLanguage: 'fr'
 		});
 	});

@@ -8,12 +8,14 @@ export interface PlayerPreferences {
 	maxHeight: number | null;
 	audioLanguage: string;
 	textLanguage: string;
+	bandwidthEstimate: number | null;
 }
 
 export const DEFAULT_PREFERENCES: Readonly<PlayerPreferences> = {
 	maxHeight: null,
 	audioLanguage: '',
-	textLanguage: ''
+	textLanguage: '',
+	bandwidthEstimate: null
 };
 
 export const PREFERENCES_STORAGE_KEY = 'player:preferences';
@@ -34,7 +36,11 @@ function sanitize(value: unknown): PlayerPreferences {
 		maxHeight:
 			typeof stored.maxHeight === 'number' && stored.maxHeight > 0 ? stored.maxHeight : null,
 		audioLanguage: typeof stored.audioLanguage === 'string' ? stored.audioLanguage : '',
-		textLanguage: typeof stored.textLanguage === 'string' ? stored.textLanguage : ''
+		textLanguage: typeof stored.textLanguage === 'string' ? stored.textLanguage : '',
+		bandwidthEstimate:
+			typeof stored.bandwidthEstimate === 'number' && stored.bandwidthEstimate > 0
+				? stored.bandwidthEstimate
+				: null
 	};
 }
 
