@@ -160,30 +160,30 @@
 		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 	}
 
-  .error-icon {
-      width: 3rem;
-      height: 3rem;
-      flex-shrink: 0;
-      margin-bottom: 0.25rem;
-  }
+	.error-icon {
+		width: 3rem;
+		height: 3rem;
+		flex-shrink: 0;
+		margin-bottom: 0.25rem;
+	}
 
-  .error-icon--info {
-      color: #60a5fa; /* blue-400 */
-  }
+	.error-icon--info {
+		color: #60a5fa; /* blue-400 */
+	}
 
-  .error-icon--warning {
-      color: #f97316; /* orange-500 */
-  }
+	.error-icon--warning {
+		color: #f97316; /* orange-500 */
+	}
 
-  .error-icon--error {
-      color: #ef4444; /* red-500 */
-  }
+	.error-icon--error {
+		color: #ef4444; /* red-500 */
+	}
 
-  /* :global because {@html} content doesn't get Svelte's scoping class */
-  .error-icon :global(svg) {
-      width: 100%;
-      height: 100%;
-  }
+	/* :global because {@html} content doesn't get Svelte's scoping class */
+	.error-icon :global(svg) {
+		width: 100%;
+		height: 100%;
+	}
 
 	.error-title {
 		margin: 0;
@@ -242,17 +242,17 @@
 		cursor: not-allowed;
 	}
 
-  .retry-icon {
-      display: inline-flex;
-      width: 1rem;
-      height: 1rem;
-      flex-shrink: 0;
-  }
+	.retry-icon {
+		display: inline-flex;
+		width: 1rem;
+		height: 1rem;
+		flex-shrink: 0;
+	}
 
-  .retry-icon :global(svg) {
-      width: 100%;
-      height: 100%;
-  }
+	.retry-icon :global(svg) {
+		width: 100%;
+		height: 100%;
+	}
 
 	.spinner {
 		display: inline-block;

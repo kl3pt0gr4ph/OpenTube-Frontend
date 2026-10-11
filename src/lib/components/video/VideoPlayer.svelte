@@ -213,8 +213,9 @@
 					'overflow_menu',
 					'fullscreen'
 				],
-				trackLabelFormat: shaka.ui.Overlay.TrackLabelFormat.LABEL_OR_LANGUAGE,
-				textTrackLabelFormat: shaka.ui.Overlay.TrackLabelFormat.LABEL_OR_LANGUAGE
+				trackLabelFormat: shaka.ui.Overlay.TrackLabelFormat.LABEL,
+				textTrackLabelFormat: shaka.ui.Overlay.TrackLabelFormat.LABEL,
+				showAudioCodec: false
 			};
 
 			ui.configure(config_ui);

@@ -52,6 +52,7 @@ export interface ShakaUIConfiguration {
 	addBigPlayButton?: boolean;
 	trackLabelFormat?: number;
 	textTrackLabelFormat?: number;
+	showAudioCodec?: boolean;
 }
 
 export interface ShakaTrackLabelFormat {

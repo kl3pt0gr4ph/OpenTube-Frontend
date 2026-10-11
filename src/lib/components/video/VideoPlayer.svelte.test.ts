@@ -13,6 +13,7 @@ const mockNetworkingEngine = {
 const mockPlayerInstance = {
 	attach: vi.fn().mockResolvedValue(undefined),
 	load: vi.fn().mockResolvedValue(undefined),
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	configure: vi.fn((_config: object) => true),
 	setTextTrackVisibility: vi.fn().mockResolvedValue(undefined),
 	isTextTrackVisible: vi.fn(() => false),
@@ -293,14 +294,13 @@ describe('VideoPlayer.svelte', () => {
 			);
 		});
 
-		it('labels audio and text tracks from the manifest Label, falling back to language', async () => {
+		it('labels tracks from the manifest Label and merges codec variants', async () => {
 			await renderAndWaitForInit();
 
 			const uiConfig = mockUIInstance.configure.mock.calls[0][0];
-			expect(uiConfig.trackLabelFormat).toBe(MockShakaUIOverlay.TrackLabelFormat.LABEL_OR_LANGUAGE);
-			expect(uiConfig.textTrackLabelFormat).toBe(
-				MockShakaUIOverlay.TrackLabelFormat.LABEL_OR_LANGUAGE
-			);
+			expect(uiConfig.trackLabelFormat).toBe(MockShakaUIOverlay.TrackLabelFormat.LABEL);
+			expect(uiConfig.textTrackLabelFormat).toBe(MockShakaUIOverlay.TrackLabelFormat.LABEL);
+			expect(uiConfig.showAudioCodec).toBe(false);
 		});
 
 		it('aborts initialization when unmounted before the Shaka import resolves', async () => {
