@@ -1,4 +1,11 @@
 <script lang="ts">
+	import infoIcon from '$lib/assets/icons/info.svg?raw';
+	import warningIcon from '$lib/assets/icons/warning.svg?raw';
+	import errorIcon from '$lib/assets/icons/error.svg?raw';
+	import refreshIcon from '$lib/assets/icons/refresh.svg?raw';
+
+	type IconVariant = 'info' | 'warning' | 'error';
+
 	const CATEGORY: Record<number, string> = {
 		1: 'NETWORK',
 		2: 'TEXT',
@@ -11,10 +18,23 @@
 		9: 'STORAGE'
 	};
 
+	const UNSUPPORTED_CONTENT_CODES = new Set([4011, 4032]);
+
+	const ICONS: Record<IconVariant, string> = {
+		info: infoIcon,
+		warning: warningIcon,
+		error: errorIcon
+	};
+
 	export interface ShakaErrorDetail {
 		category: number;
 		code: number;
 		severity: number;
+	}
+
+	function getIconVariant(code: number, severity: number): IconVariant {
+		if (UNSUPPORTED_CONTENT_CODES.has(code)) return 'info';
+		return severity === 2 ? 'error' : 'warning';
 	}
 
 	interface Props {
@@ -25,7 +45,14 @@
 
 	let { error, onRetry, retrying = false }: Props = $props();
 
-	function getMessage(category: number): { title: string; body: string } {
+	function getMessage(category: number, code: number): { title: string; body: string } {
+		if (UNSUPPORTED_CONTENT_CODES.has(code)) {
+			return {
+				title: 'Format Not Supported',
+				body: "This browser can't play any of the formats available for this video. Try a different browser."
+			};
+		}
+
 		switch (category) {
 			case 1: // NETWORK
 				return {
@@ -60,8 +87,10 @@
 		}
 	}
 
-	let { title, body } = $derived(getMessage(error.category));
+	let { title, body } = $derived(getMessage(error.category, error.code));
+	let canRetry = $derived(!UNSUPPORTED_CONTENT_CODES.has(error.code));
 	let categoryName = $derived(CATEGORY[error.category] ?? 'UNKNOWN');
+	let iconVariant = $derived(getIconVariant(error.code, error.severity));
 	let severityLabel = $derived(error.severity === 2 ? 'Critical' : 'Recoverable');
 </script>
 
@@ -76,29 +105,14 @@
 	aria-atomic="true"
 	data-testid="video-player-error"
 >
-	<!-- Warning triangle icon -->
-	<div class="error-icon" aria-hidden="true">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="1.5"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-		>
-			<path
-				d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
-			/>
-			<line x1="12" y1="9" x2="12" y2="13" />
-			<line x1="12" y1="17" x2="12.01" y2="17" />
-		</svg>
+	<div class="error-icon error-icon--{iconVariant}" data-variant={iconVariant} aria-hidden="true">
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted local asset -->
+		{@html ICONS[iconVariant]}
 	</div>
 
 	<h3 class="error-title">{title}</h3>
 	<p class="error-body">{body}</p>
 
-	<!-- Debug pill — useful in dev, unobtrusive in prod -->
 	<p
 		class="error-debug"
 		aria-label="Debug: error category {categoryName}, code {error.code}, severity {severityLabel}"
@@ -106,38 +120,30 @@
 		{categoryName}/{error.code} &bull; {severityLabel}
 	</p>
 
-	<button
-		class="retry-btn"
-		onclick={onRetry}
-		disabled={retrying}
-		aria-label={retrying ? 'Retrying, please wait' : 'Retry loading the video'}
-	>
-		{#if retrying}
-			<span class="spinner" aria-hidden="true"></span>
-			Retrying…
-		{:else}
-			<!-- Refresh icon -->
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
-			>
-				<polyline points="1 4 1 10 7 10" />
-				<path d="M3.51 15a9 9 0 1 0 .49-3.84" />
-			</svg>
-			Try again
-		{/if}
-	</button>
+	{#if canRetry}
+		<button
+			class="retry-btn"
+			onclick={onRetry}
+			disabled={retrying}
+			aria-label={retrying ? 'Retrying, please wait' : 'Retry loading the video'}
+		>
+			{#if retrying}
+				<span class="spinner" aria-hidden="true"></span>
+				Retrying…
+			{:else}
+				<!-- Refresh icon -->
+				<span class="retry-icon" aria-hidden="true">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -- trusted local asset -->
+					{@html refreshIcon}
+				</span>
+				Try again
+			{/if}
+		</button>
+	{/if}
 </div>
 
 <style>
 	.error-shell {
-		/* Match the video element's natural dimensions */
 		width: 100%;
 		aspect-ratio: 16 / 9;
 		background: #0a0a0a;
@@ -151,19 +157,30 @@
 		text-align: center;
 		box-sizing: border-box;
 
-		/* Subtle noise-style border between player and page */
 		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 	}
 
 	.error-icon {
-		color: #f97316; /* orange-500 — warning, not pure red/destructive */
 		width: 3rem;
 		height: 3rem;
 		flex-shrink: 0;
 		margin-bottom: 0.25rem;
 	}
 
-	.error-icon svg {
+	.error-icon--info {
+		color: #60a5fa; /* blue-400 */
+	}
+
+	.error-icon--warning {
+		color: #f97316; /* orange-500 */
+	}
+
+	.error-icon--error {
+		color: #ef4444; /* red-500 */
+	}
+
+	/* :global because {@html} content doesn't get Svelte's scoping class */
+	.error-icon :global(svg) {
 		width: 100%;
 		height: 100%;
 	}
@@ -225,13 +242,18 @@
 		cursor: not-allowed;
 	}
 
-	.retry-btn svg {
+	.retry-icon {
+		display: inline-flex;
 		width: 1rem;
 		height: 1rem;
 		flex-shrink: 0;
 	}
 
-	/* Spinner for the retrying state */
+	.retry-icon :global(svg) {
+		width: 100%;
+		height: 100%;
+	}
+
 	.spinner {
 		display: inline-block;
 		width: 0.875rem;
