@@ -77,7 +77,10 @@ export async function getManifest(
 		const durationStr: string | null = mpdElement?.getAttribute('mediaPresentationDuration');
 		const duration: number = parseIsoDuration(durationStr);
 
-		const adaptationSet: Element = xmlDoc.getElementsByTagNameNS(DASH_NAMESPACE, 'AdaptationSet')[0];
+		const adaptationSet: Element = xmlDoc.getElementsByTagNameNS(
+			DASH_NAMESPACE,
+			'AdaptationSet'
+		)[0];
 		const videoId: string | null = adaptationSet?.getAttribute('id');
 
 		const blob = new Blob([manifestXml], { type: 'application/dash+xml' });

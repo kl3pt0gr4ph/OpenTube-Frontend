@@ -11,6 +11,8 @@
 		9: 'STORAGE'
 	};
 
+	const UNSUPPORTED_CONTENT_CODES = new Set([4011, 4032]);
+
 	export interface ShakaErrorDetail {
 		category: number;
 		code: number;
@@ -25,7 +27,14 @@
 
 	let { error, onRetry, retrying = false }: Props = $props();
 
-	function getMessage(category: number): { title: string; body: string } {
+	function getMessage(category: number, code: number): { title: string; body: string } {
+		if (UNSUPPORTED_CONTENT_CODES.has(code)) {
+			return {
+				title: 'Format Not Supported',
+				body: "This browser can't play any of the formats available for this video. Try a different browser."
+			};
+		}
+
 		switch (category) {
 			case 1: // NETWORK
 				return {
@@ -60,7 +69,8 @@
 		}
 	}
 
-	let { title, body } = $derived(getMessage(error.category));
+	let { title, body } = $derived(getMessage(error.category, error.code));
+	let canRetry = $derived(!UNSUPPORTED_CONTENT_CODES.has(error.code));
 	let categoryName = $derived(CATEGORY[error.category] ?? 'UNKNOWN');
 	let severityLabel = $derived(error.severity === 2 ? 'Critical' : 'Recoverable');
 </script>
@@ -98,7 +108,6 @@
 	<h3 class="error-title">{title}</h3>
 	<p class="error-body">{body}</p>
 
-	<!-- Debug pill — useful in dev, unobtrusive in prod -->
 	<p
 		class="error-debug"
 		aria-label="Debug: error category {categoryName}, code {error.code}, severity {severityLabel}"
@@ -106,38 +115,39 @@
 		{categoryName}/{error.code} &bull; {severityLabel}
 	</p>
 
-	<button
-		class="retry-btn"
-		onclick={onRetry}
-		disabled={retrying}
-		aria-label={retrying ? 'Retrying, please wait' : 'Retry loading the video'}
-	>
-		{#if retrying}
-			<span class="spinner" aria-hidden="true"></span>
-			Retrying…
-		{:else}
-			<!-- Refresh icon -->
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				aria-hidden="true"
-			>
-				<polyline points="1 4 1 10 7 10" />
-				<path d="M3.51 15a9 9 0 1 0 .49-3.84" />
-			</svg>
-			Try again
-		{/if}
-	</button>
+	{#if canRetry}
+		<button
+			class="retry-btn"
+			onclick={onRetry}
+			disabled={retrying}
+			aria-label={retrying ? 'Retrying, please wait' : 'Retry loading the video'}
+		>
+			{#if retrying}
+				<span class="spinner" aria-hidden="true"></span>
+				Retrying…
+			{:else}
+				<!-- Refresh icon -->
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<polyline points="1 4 1 10 7 10" />
+					<path d="M3.51 15a9 9 0 1 0 .49-3.84" />
+				</svg>
+				Try again
+			{/if}
+		</button>
+	{/if}
 </div>
 
 <style>
 	.error-shell {
-		/* Match the video element's natural dimensions */
 		width: 100%;
 		aspect-ratio: 16 / 9;
 		background: #0a0a0a;
@@ -151,12 +161,11 @@
 		text-align: center;
 		box-sizing: border-box;
 
-		/* Subtle noise-style border between player and page */
 		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 	}
 
 	.error-icon {
-		color: #f97316; /* orange-500 — warning, not pure red/destructive */
+		color: #f97316;
 		width: 3rem;
 		height: 3rem;
 		flex-shrink: 0;
@@ -231,7 +240,6 @@
 		flex-shrink: 0;
 	}
 
-	/* Spinner for the retrying state */
 	.spinner {
 		display: inline-block;
 		width: 0.875rem;

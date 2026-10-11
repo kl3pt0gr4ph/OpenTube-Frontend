@@ -6,12 +6,36 @@ export interface ShakaError {
 	data: unknown[];
 }
 
+export interface ShakaAudioPreference {
+	language?: string;
+	role?: string;
+	label?: string;
+	channelCount?: number;
+	codec?: string;
+}
+
+export interface ShakaTextPreference {
+	language?: string;
+	role?: string;
+	forced?: boolean;
+}
+
 export interface ShakaPlayerConfiguration {
 	streaming?: {
 		bufferingGoal?: number;
 		rebufferingGoal?: number;
 		bufferBehind?: number;
 	};
+	abr?: {
+		enabled?: boolean;
+		defaultBandwidthEstimate?: number;
+		restrictToElementSize?: boolean;
+		restrictions?: {
+			maxHeight?: number;
+		};
+	};
+	preferredAudio?: ShakaAudioPreference[];
+	preferredText?: ShakaTextPreference[];
 	drm?: Record<string, unknown>;
 	manifest?: Record<string, unknown>;
 }
@@ -26,10 +50,32 @@ export interface ShakaUIConfiguration {
 	controlPanelElements?: string[];
 	addSeekBar?: boolean;
 	addBigPlayButton?: boolean;
+	trackLabelFormat?: number;
+	textTrackLabelFormat?: number;
+}
+
+export interface ShakaTrackLabelFormat {
+	LANGUAGE: number;
+	ROLE: number;
+	LANGUAGE_ROLE: number;
+	LABEL: number;
+	LABEL_OR_LANGUAGE: number;
+	LANGUAGE_OR_LABEL: number;
+}
+
+export interface ShakaTrack {
+	language: string;
+	primary: boolean;
+	active: boolean;
 }
 
 export interface ShakaErrorEvent extends Event {
 	detail: ShakaError;
+}
+
+export interface ShakaVariantChangedEvent extends Event {
+	oldTrack?: ShakaTrack;
+	newTrack?: ShakaTrack;
 }
 
 export interface ShakaPlayerClass {
@@ -64,11 +110,14 @@ export interface ShakaRequest {
 export interface ShakaPlayerInstance {
 	attach(video: HTMLMediaElement): Promise<void>;
 	load(manifestUri: string, startTime?: number | null, mimeType?: string): Promise<void>;
-	configure(config: ShakaPlayerConfiguration): void;
+	configure(config: ShakaPlayerConfiguration): boolean;
 	destroy(): Promise<void>;
 	addEventListener(type: string, listener: (event: ShakaErrorEvent) => void): void;
 	removeEventListener(type: string, listener: (event: ShakaErrorEvent) => void): void;
 	getNetworkingEngine(): ShakaNetworkingEngine | null;
+	getTextTracks(): ShakaTrack[];
+	isTextTrackVisible(): boolean;
+	setTextTrackVisibility(visible: boolean): Promise<void> | void;
 }
 
 export interface ShakaUIOverlayClass {
@@ -77,6 +126,7 @@ export interface ShakaUIOverlayClass {
 		videoContainer: HTMLElement,
 		video: HTMLMediaElement
 	): ShakaUIOverlayInstance;
+	TrackLabelFormat: ShakaTrackLabelFormat;
 }
 
 export interface ShakaUIOverlayInstance {

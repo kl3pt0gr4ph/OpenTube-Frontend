@@ -50,6 +50,19 @@ describe('VideoPlayerError', () => {
 		});
 	});
 
+	describe('unsupported content', () => {
+		it.each([
+			[4032, 'CONTENT_UNSUPPORTED_BY_BROWSER'],
+			[4011, 'UNPLAYABLE_PERIOD']
+		])('code %i (%s) explains the browser cannot play the video and hides retry', (code) => {
+			renderError({ category: 4, code });
+
+			expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent('Format Not Supported');
+			expect(screen.getByText(/can't play any of the formats/i)).toBeInTheDocument();
+			expect(screen.queryByRole('button')).not.toBeInTheDocument();
+		});
+	});
+
 	describe('severity label', () => {
 		it.each([
 			[2, 'Critical'],

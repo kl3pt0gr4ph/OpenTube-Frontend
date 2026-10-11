@@ -11,8 +11,16 @@
 		ShakaPlayerInstance,
 		ShakaRequest,
 		ShakaUIConfiguration,
-		ShakaUIOverlayInstance
+		ShakaUIOverlayInstance,
+		ShakaVariantChangedEvent
 	} from '$lib/player/shaka';
+	import {
+		DEFAULT_PREFERENCES,
+		loadPreferences,
+		savePreferences,
+		type PlayerPreferences
+	} from '$lib/player/preferences';
+	import { buildPlayerConfig } from '$lib/player/config';
 
 	let { config }: { config: VideoPlayerConfig } = $props();
 
@@ -21,13 +29,14 @@
 	let player: ShakaPlayerInstance | null = null;
 	let ui: ShakaUIOverlayInstance | null = null;
 
-	// True once the player is attached and the first manifest load has completed
 	let playerReady = $state(false);
 
-	// Last manifest URL handed to player.load()
 	let loadedUrl: string | null = null;
 
-	// Error State
+	let preferences: PlayerPreferences = { ...DEFAULT_PREFERENCES };
+
+	let applyingPreferences = false;
+
 	let playerError = $state<ShakaErrorDetail | null>(null);
 	let retrying = $state(false);
 
@@ -63,17 +72,23 @@
 		const mimeType: string = config.isMuxed ? 'video/mp4' : 'application/dash+xml';
 
 		loadedUrl = url;
+		applyingPreferences = true;
 
 		try {
-			console.log('isMuxed:', config.isMuxed, 'mimeType:', mimeType);
-			await player.load(config.manifestUrl, null, mimeType);
+			if (!config.isMuxed) {
+				player.configure(buildPlayerConfig(preferences));
+			}
+
+			await player.load(url, null, mimeType);
+
+			if (!config.isMuxed && preferences.textLanguage) {
+				await player.setTextTrackVisibility(true);
+			}
 			playerError = null;
 			await tick();
 			setShakaControlsVisible(true);
 		} catch (err) {
 			console.error('Error loading video player manifest:', err);
-			// If Shaka threw its own error object, extract the detail.
-			// Otherwise, fall back to a generic MANIFEST error.
 			const shakaErr = err as { category?: unknown; code?: number; severity?: number };
 			if (typeof shakaErr?.category === 'number') {
 				playerError = {
@@ -112,6 +127,33 @@
 		playerError = { category, code, severity };
 	}
 
+	function handleVariantChanged(event: Event) {
+		if (applyingPreferences) return;
+
+		const { oldTrack, newTrack } = event as ShakaVariantChangedEvent;
+		if (!newTrack) return;
+
+		const audioChanged =
+			oldTrack?.language !== newTrack.language || oldTrack?.primary !== newTrack.primary;
+		if (!audioChanged) return;
+
+		preferences = savePreferences({ audioLanguage: newTrack.primary ? '' : newTrack.language });
+	}
+
+	function handleTextSelectionChanged() {
+		if (applyingPreferences || !player) return;
+
+		if (!player.isTextTrackVisible()) {
+			preferences = savePreferences({ textLanguage: '' });
+			return;
+		}
+
+		const active = player.getTextTracks().find((track) => track.active);
+		if (active?.language) {
+			preferences = savePreferences({ textLanguage: active.language });
+		}
+	}
+
 	async function handleRetry() {
 		if (retrying) return;
 		retrying = true;
@@ -127,12 +169,10 @@
 
 	let destroyed = false;
 
-	// onDestroy(() => {
-	// 	destroyed = true;
-	// });
-
 	onMount(async () => {
 		if (!browser) return;
+
+		preferences = loadPreferences();
 
 		// Dynamically import Shaka Player only in the browser (no SSR)
 		const shakaModule = await import('shaka-player/dist/shaka-player.ui');
@@ -168,15 +208,21 @@
 					'volume',
 					'spacer',
 					'quality',
+					'language',
 					'captions',
 					'overflow_menu',
 					'fullscreen'
-				]
+				],
+				trackLabelFormat: shaka.ui.Overlay.TrackLabelFormat.LABEL_OR_LANGUAGE,
+				textTrackLabelFormat: shaka.ui.Overlay.TrackLabelFormat.LABEL_OR_LANGUAGE
 			};
 
 			ui.configure(config_ui);
 
 			player.addEventListener('error', handleShakaErrorEvent);
+			player.addEventListener('variantchanged', handleVariantChanged);
+			player.addEventListener('textchanged', handleTextSelectionChanged);
+			player.addEventListener('texttrackvisibility', handleTextSelectionChanged);
 
 			// Request filter to proxy googlevideo.com URLs
 			const networkingEngine = player.getNetworkingEngine();
@@ -207,16 +253,18 @@
 
 						request.uris[0] = proxyUrl.toString();
 					}
-					// }
 				});
 			}
 
 			await loadManifest();
+			playerReady = true;
 		} catch (error) {
 			console.error('Error initializing video player:', error);
 			playerError = { category: 7, code: 0, severity: 2 };
 			await tick();
 			setShakaControlsVisible(false);
+		} finally {
+			applyingPreferences = false;
 		}
 	});
 
