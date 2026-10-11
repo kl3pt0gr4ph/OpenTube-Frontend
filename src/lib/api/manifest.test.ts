@@ -2,7 +2,8 @@
  * Test Suite: manifest.ts
  *
  * Tests for DASH manifest fetching including XML parsing, duration extraction,
- * blob URL generation, error handling, and backward compatibility
+ * blob URL generation, the muxed-progressive fallback, error handling, and
+ * backward compatibility
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -14,6 +15,8 @@ import {
 } from '../../tests/helpers/apiHelpers';
 import manifestXmlFixture from '../../tests/fixtures/api/manifestXmlFixture.xml?raw';
 
+const DIRECT_URL = 'https://rr3---sn-test.googlevideo.com/videoplayback?id=123';
+
 const createMockManifestXml = (duration: string = 'PT2M56S'): string =>
 	manifestXmlFixture
 		.replace('STANDARD_DURATION', `duration="${duration}"`)
@@ -22,14 +25,17 @@ const createMockManifestXml = (duration: string = 'PT2M56S'): string =>
 const createManifestXmlWithoutDuration = (): string =>
 	manifestXmlFixture.replace('STANDARD_DURATION', '').replace('MEDIA_PRESENTATION_DURATION', '');
 
-const createMuxedFetch = (directUrl: string) =>
+/** A /dash response carrying a direct URL instead of a manifest. */
+const createMuxedFetch = (body: string, headers: Record<string, string>) =>
 	vi.fn().mockResolvedValue({
 		ok: true,
 		status: 200,
 		statusText: 'OK',
-		headers: new Headers({ 'X-Stream-Type': 'muxed-progressive' }),
-		text: vi.fn().mockResolvedValue(directUrl)
+		headers: new Headers(headers),
+		text: vi.fn().mockResolvedValue(body)
 	}) as unknown as typeof globalThis.fetch;
+
+const URI_LIST = { 'Content-Type': 'text/uri-list;charset=UTF-8' };
 
 beforeEach(() => {
 	global.URL.createObjectURL = vi.fn(() => `blob:http://localhost/${Math.random()}`);
@@ -54,18 +60,50 @@ describe('getManifest', () => {
 		expect((createObjectURL.mock.calls[0][0] as Blob).type).toBe('application/dash+xml');
 	});
 
-	it('falls back to a direct URL for muxed-progressive streams (X-Stream-Type header)', async () => {
-		const directUrl = 'https://rr3---sn-test.googlevideo.com/videoplayback?id=123';
+	it('parses a millisecond-precision duration', async () => {
+		// The API now sends the real media length, e.g. PT1M59.702S
+		const mockFetch = createSuccessfulFetch(createMockManifestXml('PT1M59.702S'), {
+			format: 'xml'
+		});
 		vi.spyOn(console, 'log').mockImplementation(() => {});
 
-		const result = await getManifest('video-id', createMuxedFetch(directUrl));
+		const result = await getManifest('video-id', mockFetch as never);
 
-		expect(result).toEqual({
-			url: directUrl,
-			duration: 0,
-			isMuxed: true
+		expect(result.duration).toBeCloseTo(119.702, 3);
+	});
+
+	describe('muxed-progressive fallback', () => {
+		it.each([
+			['URL with the trailing CRLF the API sends', `${DIRECT_URL}\r\n`],
+			['bare URL', DIRECT_URL],
+			['URL after a comment line', `# muxed fallback\r\n${DIRECT_URL}\r\n`]
+		])('returns the trimmed direct URL for a text/uri-list %s', async (_name, body) => {
+			vi.spyOn(console, 'log').mockImplementation(() => {});
+
+			const result = await getManifest('video-id', createMuxedFetch(body, URI_LIST));
+
+			expect(result).toEqual({ url: DIRECT_URL, duration: 0, isMuxed: true });
+			expect(URL.createObjectURL).not.toHaveBeenCalled();
 		});
-		expect(URL.createObjectURL).not.toHaveBeenCalled();
+
+		it('still recognises the legacy X-Stream-Type header', async () => {
+			vi.spyOn(console, 'log').mockImplementation(() => {});
+
+			const result = await getManifest(
+				'video-id',
+				createMuxedFetch(DIRECT_URL, { 'X-Stream-Type': 'muxed-progressive' })
+			);
+
+			expect(result).toEqual({ url: DIRECT_URL, duration: 0, isMuxed: true });
+		});
+
+		it('throws when the fallback body contains no URL', async () => {
+			vi.spyOn(console, 'error').mockImplementation(() => {});
+
+			await expect(
+				getManifest('video-id', createMuxedFetch('\r\n# nothing here\r\n', URI_LIST))
+			).rejects.toThrow(/video-id[\s\S]*no URL/);
+		});
 	});
 
 	it('defaults duration to 0 when mediaPresentationDuration is absent', async () => {

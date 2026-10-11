@@ -8,7 +8,28 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Related items on the video page now render playlists and channels alongside videos, not just videos.
+- Related items on the video page now render playlists and channels alongside videos, not just videos ([#57])
+- Audio language menu in the player, labelled with YouTube's track names ([#57])
+- Persisted playback preferences: the chosen audio and subtitle languages carry over to the next video ([#57])
+- Player configuration: ABR starts around 720p–1080p and never fetches a resolution larger than the player ([#57])
+- "Format Not Supported" error, without a retry button, when the browser can't decode any of a video's formats ([#57])
+
+### Changed
+
+- ErrorCard redesigned to match the app: SVG icons instead of emoji, icon beside the title and message, a rounded border with a background tinted by the variant colour, and larger text ([#43])
+- The warning variant uses amber instead of grey ([#43])
+- Empty search results and other "no results" states show a plain message instead of an error card ([#43])
+- The muxed fallback is detected by `Content-Type: text/uri-list`; the `X-Stream-Type` header is still accepted for one release ([#57])
+- Track menus show the manifest's labels, and AAC/Opus copies of one track appear as a single entry ([#57])
+- A manually chosen quality resets to Auto on the next video ([#57])
+
+### Fixed
+
+- Navigating between videos now loads the new video in place instead of keeping the old one ([#57])
+- The retry icon's circle and arrowhead are drawn correctly ([#57])
+
+[#57]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/57
+[#43]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/43
 
 ## [0.3.0] - 2026-09-09
 

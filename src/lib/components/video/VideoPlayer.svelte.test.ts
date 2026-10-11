@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, waitFor, fireEvent } from '@testing-library/svelte';
 import '@testing-library/jest-dom';
+import { PREFERENCES_STORAGE_KEY, loadPreferences } from '$lib/player/preferences';
 
 let mockRegisterRequestFilter = vi.fn();
 
@@ -12,6 +13,11 @@ const mockNetworkingEngine = {
 const mockPlayerInstance = {
 	attach: vi.fn().mockResolvedValue(undefined),
 	load: vi.fn().mockResolvedValue(undefined),
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	configure: vi.fn((_config: object) => true),
+	setTextTrackVisibility: vi.fn().mockResolvedValue(undefined),
+	isTextTrackVisible: vi.fn(() => false),
+	getTextTracks: vi.fn((): { active: boolean; language: string }[] => []),
 	getNetworkingEngine: vi.fn(() => mockNetworkingEngine),
 	addEventListener: vi.fn(),
 	removeEventListener: vi.fn(),
@@ -44,6 +50,22 @@ class MockShakaPlayer {
 		return mockPlayerInstance.load(manifestUrl, startTime, mimeType);
 	}
 
+	configure(config: object) {
+		return mockPlayerInstance.configure(config);
+	}
+
+	setTextTrackVisibility(visible: boolean) {
+		return mockPlayerInstance.setTextTrackVisibility(visible);
+	}
+
+	isTextTrackVisible() {
+		return mockPlayerInstance.isTextTrackVisible();
+	}
+
+	getTextTracks() {
+		return mockPlayerInstance.getTextTracks();
+	}
+
 	getNetworkingEngine() {
 		return mockPlayerInstance.getNetworkingEngine();
 	}
@@ -62,6 +84,14 @@ class MockShakaPlayer {
 }
 
 class MockShakaUIOverlay {
+	static TrackLabelFormat = {
+		LANGUAGE: 0,
+		ROLE: 1,
+		LANGUAGE_ROLE: 2,
+		LABEL: 3,
+		LABEL_OR_LANGUAGE: 4
+	};
+
 	configure(config: ShakaUIConfiguration) {
 		mockUIInstance.configure(config);
 	}
@@ -109,7 +139,7 @@ describe('VideoPlayer.svelte', () => {
 		const result = render(VideoPlayer, { config });
 		await waitFor(
 			() => {
-				expect(mockPlayerInstance.attach).toHaveBeenCalled();
+				expect(mockPlayerInstance.load).toHaveBeenCalled();
 			},
 			{ timeout: 2000 }
 		);
@@ -121,11 +151,14 @@ describe('VideoPlayer.svelte', () => {
 		return mockRegisterRequestFilter.mock.calls[0][0];
 	};
 
-	const getErrorListener = () => {
-		const call = mockPlayerInstance.addEventListener.mock.calls.find(([evt]) => evt === 'error');
+	/** The listener the component registered for a Shaka player event. */
+	const getListener = (eventName: string) => {
+		const call = mockPlayerInstance.addEventListener.mock.calls.find(([evt]) => evt === eventName);
 		expect(call).toBeDefined();
-		return call![1] as (event: { detail?: unknown }) => void;
+		return call![1] as (event: unknown) => void;
 	};
+
+	const getErrorListener = () => getListener('error') as (event: { detail?: unknown }) => void;
 
 	const createMockRequest = (url: string, headers = {}) => ({
 		uris: [url],
@@ -140,6 +173,15 @@ describe('VideoPlayer.svelte', () => {
 			{ timeout: 2000 }
 		);
 
+	const storePreferences = (prefs: object) =>
+		localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(prefs));
+
+	const audioTrack = (language: string, primary: boolean, height = 1080) => ({
+		language,
+		primary,
+		height
+	});
+
 	const SEGMENT_TYPE = 1;
 	const MANIFEST_TYPE = 0;
 
@@ -147,6 +189,7 @@ describe('VideoPlayer.svelte', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		capturedVideoElement = null;
+		localStorage.clear();
 
 		mockRegisterRequestFilter = vi.fn();
 		mockNetworkingEngine.registerRequestFilter = mockRegisterRequestFilter;
@@ -161,6 +204,10 @@ describe('VideoPlayer.svelte', () => {
 		});
 		mockPlayerInstance.attach.mockResolvedValue(undefined);
 		mockPlayerInstance.load.mockResolvedValue(undefined);
+		mockPlayerInstance.configure.mockReturnValue(true);
+		mockPlayerInstance.setTextTrackVisibility.mockResolvedValue(undefined);
+		mockPlayerInstance.isTextTrackVisible.mockReturnValue(false);
+		mockPlayerInstance.getTextTracks.mockReturnValue([]);
 		mockPlayerInstance.destroy.mockImplementation(() => Promise.resolve());
 		mockPlayerInstance.getNetworkingEngine.mockReturnValue(mockNetworkingEngine);
 	});
@@ -212,6 +259,7 @@ describe('VideoPlayer.svelte', () => {
 						'volume',
 						'spacer',
 						'quality',
+						'language',
 						'captions',
 						'overflow_menu',
 						'fullscreen'
@@ -244,6 +292,15 @@ describe('VideoPlayer.svelte', () => {
 				},
 				{ timeout: 2000 }
 			);
+		});
+
+		it('labels tracks from the manifest Label and merges codec variants', async () => {
+			await renderAndWaitForInit();
+
+			const uiConfig = mockUIInstance.configure.mock.calls[0][0];
+			expect(uiConfig.trackLabelFormat).toBe(MockShakaUIOverlay.TrackLabelFormat.LABEL);
+			expect(uiConfig.textTrackLabelFormat).toBe(MockShakaUIOverlay.TrackLabelFormat.LABEL);
+			expect(uiConfig.showAudioCodec).toBe(false);
 		});
 
 		it('aborts initialization when unmounted before the Shaka import resolves', async () => {
@@ -287,6 +344,187 @@ describe('VideoPlayer.svelte', () => {
 			mockPlayerInstance.load.mockRejectedValueOnce({ category: 3, code: 1001 });
 			const { container } = render(VideoPlayer, { config: mockConfig });
 			await waitForErrorOverlay(container);
+		});
+
+		it('explains when the browser cannot play any variant', async () => {
+			mockPlayerInstance.load.mockRejectedValueOnce({ category: 4, code: 4032, severity: 2 });
+			const { container, findByText } = render(VideoPlayer, { config: mockConfig });
+
+			await waitForErrorOverlay(container);
+			expect(await findByText('Format Not Supported')).toBeInTheDocument();
+		});
+	});
+
+	describe('Playback preferences', () => {
+		it('configures ABR and the original audio track before loading', async () => {
+			await renderAndWaitForInit();
+
+			expect(mockPlayerInstance.configure).toHaveBeenCalledTimes(1);
+			const config = mockPlayerInstance.configure.mock.calls[0][0] as {
+				abr: { enabled: boolean; restrictToElementSize: boolean };
+				preferredAudio: { language: string; role: string }[];
+				preferredText: unknown[];
+			};
+			expect(config.abr.enabled).toBe(true);
+			expect(config.abr.restrictToElementSize).toBe(true);
+			expect(config.preferredAudio.at(-1)).toMatchObject({ language: '', role: 'main' });
+			expect(config.preferredText).toEqual([]);
+
+			expect(mockPlayerInstance.configure.mock.invocationCallOrder[0]).toBeLessThan(
+				mockPlayerInstance.load.mock.invocationCallOrder[0]
+			);
+		});
+
+		it('reapplies the configuration on every load, resetting a manual quality to Auto', async () => {
+			const { container, getByRole } = await renderAndWaitForInit();
+			getErrorListener()({ detail: { category: 1, code: 1002, severity: 2 } });
+			await waitForErrorOverlay(container);
+
+			await fireEvent.click(getByRole('button', { name: /retry/i }));
+
+			await waitFor(() => {
+				expect(mockPlayerInstance.configure).toHaveBeenCalledTimes(2);
+				expect(mockPlayerInstance.configure.mock.calls[1][0]).toMatchObject({
+					abr: { enabled: true }
+				});
+			});
+		});
+
+		it('reloads in place on navigation, reapplying the configuration', async () => {
+			const nextUrl = 'blob:http://localhost:5173/next-video';
+			const { rerender } = await renderAndWaitForInit();
+
+			await rerender({ config: { ...mockConfig, manifestUrl: nextUrl } });
+
+			await waitFor(() => {
+				expect(mockPlayerInstance.load).toHaveBeenLastCalledWith(
+					nextUrl,
+					null,
+					'application/dash+xml'
+				);
+				expect(mockPlayerInstance.configure).toHaveBeenCalledTimes(2);
+			});
+		});
+
+		it('applies stored audio and subtitle languages', async () => {
+			storePreferences({ audioLanguage: 'de', textLanguage: 'en' });
+
+			await renderAndWaitForInit();
+
+			const config = mockPlayerInstance.configure.mock.calls[0][0] as {
+				preferredAudio: { language: string }[];
+				preferredText: { language: string }[];
+			};
+			expect(config.preferredAudio[0].language).toBe('de');
+			expect(config.preferredText[0].language).toBe('en');
+			await waitFor(() =>
+				expect(mockPlayerInstance.setTextTrackVisibility).toHaveBeenCalledWith(true)
+			);
+		});
+
+		it('leaves subtitles off when no subtitle language is stored', async () => {
+			await renderAndWaitForInit();
+
+			expect(mockPlayerInstance.setTextTrackVisibility).not.toHaveBeenCalled();
+		});
+
+		it('does not configure DASH preferences for a muxed stream', async () => {
+			await renderAndWaitForInit({
+				...mockConfig,
+				manifestUrl: 'https://example.com/direct-stream.mp4',
+				isMuxed: true
+			});
+
+			expect(mockPlayerInstance.configure).not.toHaveBeenCalled();
+		});
+
+		describe('remembering audio choices', () => {
+			it('stores the language when the viewer switches to a dub', async () => {
+				await renderAndWaitForInit();
+
+				getListener('variantchanged')({
+					oldTrack: audioTrack('en', true),
+					newTrack: audioTrack('de', false)
+				});
+
+				expect(loadPreferences().audioLanguage).toBe('de');
+			});
+
+			it('clears the language when the viewer switches back to the original', async () => {
+				storePreferences({ audioLanguage: 'de' });
+				await renderAndWaitForInit();
+
+				getListener('variantchanged')({
+					oldTrack: audioTrack('de', false),
+					newTrack: audioTrack('en', true)
+				});
+
+				expect(loadPreferences().audioLanguage).toBe('');
+			});
+
+			it('ignores a quality-only change', async () => {
+				await renderAndWaitForInit();
+
+				getListener('variantchanged')({
+					oldTrack: audioTrack('en', true, 1080),
+					newTrack: audioTrack('en', true, 720)
+				});
+
+				expect(localStorage.getItem(PREFERENCES_STORAGE_KEY)).toBeNull();
+			});
+		});
+
+		describe('remembering subtitle choices', () => {
+			it.each(['textchanged', 'texttrackvisibility'])(
+				'stores the active subtitle language on %s',
+				async (eventName) => {
+					await renderAndWaitForInit();
+					mockPlayerInstance.isTextTrackVisible.mockReturnValue(true);
+					mockPlayerInstance.getTextTracks.mockReturnValue([
+						{ active: false, language: 'fr' },
+						{ active: true, language: 'en' }
+					]);
+
+					getListener(eventName)({});
+
+					expect(loadPreferences().textLanguage).toBe('en');
+				}
+			);
+
+			it('clears the subtitle language when subtitles are turned off', async () => {
+				storePreferences({ textLanguage: 'en' });
+				await renderAndWaitForInit();
+				mockPlayerInstance.isTextTrackVisible.mockReturnValue(false);
+
+				getListener('texttrackvisibility')({});
+
+				expect(loadPreferences().textLanguage).toBe('');
+			});
+
+			it('keeps the stored language when this video has no matching track', async () => {
+				storePreferences({ textLanguage: 'ja' });
+				await renderAndWaitForInit();
+				mockPlayerInstance.isTextTrackVisible.mockReturnValue(true);
+				mockPlayerInstance.getTextTracks.mockReturnValue([{ active: false, language: 'en' }]);
+
+				getListener('textchanged')({});
+
+				expect(loadPreferences().textLanguage).toBe('ja');
+			});
+
+			it('ignores events caused by its own load', async () => {
+				storePreferences({ textLanguage: 'en' });
+				// Fire the visibility event while setTextTrackVisibility is still in progress
+				mockPlayerInstance.setTextTrackVisibility.mockImplementation(async () => {
+					mockPlayerInstance.isTextTrackVisible.mockReturnValue(false);
+					getListener('texttrackvisibility')({});
+				});
+
+				await renderAndWaitForInit();
+				await waitFor(() => expect(mockPlayerInstance.setTextTrackVisibility).toHaveBeenCalled());
+
+				expect(loadPreferences().textLanguage).toBe('en');
+			});
 		});
 	});
 

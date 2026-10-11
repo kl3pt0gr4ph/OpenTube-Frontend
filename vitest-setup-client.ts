@@ -5,9 +5,10 @@
  * Runs before each client test suite.
  */
 
-import { afterEach, vi } from 'vitest';
+import { beforeEach, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import './src/tests/matchers';
+import { memoryStorage } from './src/tests/helpers/memoryStorage';
 
 // Mock SvelteKit's $app/environment
 vi.mock('$app/environment', () => ({
@@ -54,9 +55,14 @@ vi.mock('$app/paths', () => ({
 	assets: ''
 }));
 
+beforeEach(() => {
+	vi.stubGlobal('localStorage', memoryStorage());
+});
+
 // Cleanup after each test
 afterEach(() => {
 	vi.clearAllMocks();
+	vi.unstubAllGlobals();
 });
 
 // Browser-specific setup
