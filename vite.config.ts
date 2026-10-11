@@ -1,7 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
 export default defineConfig({
@@ -57,7 +56,6 @@ export default defineConfig({
 		projects: [
 			// Client tests (Svelte components)
 			{
-				plugins: [svelte()],
 				resolve: {
 					conditions: ['browser'],
 					alias: {

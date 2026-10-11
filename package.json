@@ -41,10 +41,10 @@
 		"@testing-library/svelte": "^5.4.2",
 		"@testing-library/user-event": "^14.6.7",
 		"@types/node": "^24.19.1",
-		"@vitest/browser": "^4.1.10",
-		"@vitest/browser-playwright": "^4.1.10",
-		"@vitest/coverage-v8": "^4.1.10",
-		"@vitest/ui": "^4.1.10",
+		"@vitest/browser": "^5.0.3",
+		"@vitest/browser-playwright": "^5.0.3",
+		"@vitest/coverage-v8": "^5.0.3",
+		"@vitest/ui": "^5.0.3",
 		"dotenv-cli": "^11.0.0",
 		"eslint": "^10.12.0",
 		"eslint-config-prettier": "^10.0.1",
@@ -61,7 +61,7 @@
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.71.1",
 		"vite": "^8.3.4",
-		"vitest": "^5.0.2",
+		"vitest": "^5.0.3",
 		"vitest-browser-svelte": "^3.1.0"
 	},
 	"dependencies": {
