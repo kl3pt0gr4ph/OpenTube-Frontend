@@ -7,6 +7,7 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Changed
+
 - Playback copes better with slow connections: the player buffers further ahead and waits for more video before resuming after a stall ([#65])
 - The player prefers AV1, then VP9, then H.264, for more resolution at the same bandwidth ([#65])
 - Videos start at a quality based on your connection's measured speed from previous videos, instead of a fixed guess ([#65])
