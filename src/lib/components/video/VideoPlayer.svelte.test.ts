@@ -249,7 +249,14 @@ describe('VideoPlayer.svelte', () => {
 					const uiConfig = mockUIInstance.configure.mock.calls[0][0];
 
 					expect(uiConfig.addSeekBar).toBe(true);
-					expect(uiConfig.addBigPlayButton).toBe(true);
+
+					const expectedBigButtons = ['play_pause_buffering'];
+
+					expectedBigButtons.forEach((button) => {
+						expect(uiConfig.bigButtons).toContain(button);
+					});
+
+					expect(uiConfig.showBufferingSpinner).toBe(false);
 
 					// Control panel elements
 					const expectedControls = [
