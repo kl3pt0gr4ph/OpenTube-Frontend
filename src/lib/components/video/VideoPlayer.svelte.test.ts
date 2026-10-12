@@ -252,9 +252,9 @@ describe('VideoPlayer.svelte', () => {
 
 					const expectedBigButtons = ['play_pause_buffering'];
 
-					expectedBigButtons.forEach(button => {
+					expectedBigButtons.forEach((button) => {
 						expect(uiConfig.bigButtons).toContain(button);
-					})
+					});
 
 					expect(uiConfig.showBufferingSpinner).toBe(false);
 
