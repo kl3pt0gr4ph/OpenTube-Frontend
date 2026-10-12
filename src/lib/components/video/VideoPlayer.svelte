@@ -212,7 +212,7 @@
 
 			const config_ui: ShakaUIConfiguration = {
 				addSeekBar: true,
-				addBigPlayButton: true,
+				bigButtons: ['play_pause_buffering'],
 				controlPanelElements: [
 					'play_pause',
 					'time_and_duration',
@@ -225,6 +225,7 @@
 					'overflow_menu',
 					'fullscreen'
 				],
+				showBufferingSpinner: false,
 				trackLabelFormat: shaka.ui.Overlay.TrackLabelFormat.LABEL,
 				textTrackLabelFormat: shaka.ui.Overlay.TrackLabelFormat.LABEL,
 				showAudioCodec: false

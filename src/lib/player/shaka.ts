@@ -59,8 +59,8 @@ export interface ShakaUIConfiguration {
 	};
 	controlPanelElements?: string[];
 	addSeekBar?: boolean;
-	addBigPlayButton?: boolean;
-	// bigButtons?: string[];
+	bigButtons?: string[];
+	showBufferingSpinner?: boolean;
 	trackLabelFormat?: number;
 	textTrackLabelFormat?: number;
 	showAudioCodec?: boolean;
