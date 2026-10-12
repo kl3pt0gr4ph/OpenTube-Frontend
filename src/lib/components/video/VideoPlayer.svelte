@@ -53,12 +53,22 @@
 		}
 	}
 
+	function rememberBandwidth() {
+		if (!player) return;
+		const estimate = player.getStats().estimatedBandwidth;
+		if (Number.isFinite(estimate) && estimate > 0) {
+			preferences = savePreferences({ bandwidthEstimate: Math.round(estimate) });
+		}
+	}
+
 	/**
 	 * Load or reload the manifest into an already-attached player.
 	 * Called on first mount and on retry.
 	 */
 	async function loadManifest() {
 		if (!player) return;
+
+		rememberBandwidth();
 
 		if (!config.manifestUrl) {
 			console.error('Manifest URL is empty or undefined');
@@ -101,6 +111,8 @@
 			}
 			await tick();
 			setShakaControlsVisible(false);
+		} finally {
+			applyingPreferences = false;
 		}
 	}
 
@@ -265,12 +277,12 @@
 			playerError = { category: 7, code: 0, severity: 2 };
 			await tick();
 			setShakaControlsVisible(false);
-		} finally {
-			applyingPreferences = false;
 		}
 	});
 
 	onDestroy(() => {
+		rememberBandwidth();
+
 		destroyed = true;
 		playerReady = false;
 
