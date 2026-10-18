@@ -7,6 +7,8 @@ export interface KioskVideoConfig {
 	url: string;
 	title: string;
 	thumbnail: string;
+	channelAvatar: string;
+	channelId: string;
 	channelName: string;
 	viewCount: number;
 	uploadDate: string;
@@ -16,12 +18,18 @@ export interface KioskVideoConfig {
 /**
  * Adapts a single kiosk item ot kiosk video config
  */
-function adaptKioskVideo(item: KioskApiResponseItem, defaultThumbnail: string): KioskVideoConfig {
+function adaptKioskVideo(
+	item: KioskApiResponseItem,
+	defaultThumbnail: string,
+	defaultAvatar: string
+): KioskVideoConfig {
 	return {
 		id: extractIdFromUrl(item.url),
 		url: item.url || '',
 		title: item.name || 'Untitled Video',
 		thumbnail: selectBestImage(item.thumbnails, defaultThumbnail),
+		channelAvatar: selectBestImage(item.uploaderAvatars, defaultAvatar),
+		channelId: extractIdFromUrl(item.uploaderUrl),
 		channelName: item.uploaderName || 'Unknown Channel',
 		viewCount: handleNegativeCount(item.viewCount) || 0,
 		duration: handleNegativeCount(item.duration) || 0,
@@ -34,7 +42,8 @@ function adaptKioskVideo(item: KioskApiResponseItem, defaultThumbnail: string): 
  */
 export function adaptKioskVideos(
 	items: KioskApiResponseItem[] | undefined,
-	defaultThumbnail: string
+	defaultThumbnail: string,
+	defaultAvatar: string
 ): KioskVideoConfig[] {
 	if (!items || items.length === 0) {
 		return [];
@@ -42,7 +51,9 @@ export function adaptKioskVideos(
 
 	return items
 		.filter((item: KioskApiResponseItem): string => item && item.url && item.name)
-		.map((item: KioskApiResponseItem): KioskVideoConfig => adaptKioskVideo(item, defaultThumbnail));
+		.map((item: KioskApiResponseItem): KioskVideoConfig =>
+			adaptKioskVideo(item, defaultThumbnail, defaultAvatar)
+		);
 }
 
 function handleNegativeCount(count: number): number {

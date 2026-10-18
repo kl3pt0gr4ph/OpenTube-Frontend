@@ -10,6 +10,26 @@
 			"uploaderName": "GLITCH",
 			"uploaderUrl": "https://www.youtube.com/channel/c1357",
 			"uploaderVerified": true,
+			"uploaderAvatars": [
+				{
+					"url": "https://yt3.ggpht.com/glitch-avatar=s48-c-k-c0x00ffffff-no-rj",
+					"width": 48,
+					"height": 48,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/glitch-avatar=s88-c-k-c0x00ffffff-no-rj",
+					"width": 88,
+					"height": 88,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/glitch-avatar=s176-c-k-c0x00ffffff-no-rj",
+					"width": 176,
+					"height": 176,
+					"estimatedResolutionLevel": "MEDIUM"
+				}
+			],
 			"duration": 3641,
 			"viewCount": 128400,
 			"uploadDate": "2026-08-21T00:00Z",
@@ -19,22 +39,26 @@
 				{
 					"url": "https://i.ytimg.com/vi/heartbeat-commentary-id/hqdefault.jpg/xs",
 					"width": 168,
-					"height": 94
+					"height": 94,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/heartbeat-commentary-id/hqdefault.jpg/sm",
 					"width": 196,
-					"height": 110
+					"height": 110,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/heartbeat-commentary-id/hqdefault.jpg/md",
 					"width": 246,
-					"height": 138
+					"height": 138,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/heartbeat-commentary-id/hqdefault.jpg/lg",
 					"width": 336,
-					"height": 188
+					"height": 188,
+					"estimatedResolutionLevel": "MEDIUM"
 				}
 			]
 		},
@@ -44,6 +68,26 @@
 			"uploaderName": "Loopback Radio",
 			"uploaderUrl": "https://www.youtube.com/channel/c2201",
 			"uploaderVerified": true,
+			"uploaderAvatars": [
+				{
+					"url": "https://yt3.ggpht.com/loopback-avatar=s48-c-k-c0x00ffffff-no-rj",
+					"width": 48,
+					"height": 48,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/loopback-avatar=s88-c-k-c0x00ffffff-no-rj",
+					"width": 88,
+					"height": 88,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/loopback-avatar=s176-c-k-c0x00ffffff-no-rj",
+					"width": 176,
+					"height": 176,
+					"estimatedResolutionLevel": "MEDIUM"
+				}
+			],
 			"duration": 26037,
 			"viewCount": 79763,
 			"uploadDate": "2026-08-21T00:00Z",
@@ -53,12 +97,14 @@
 				{
 					"url": "https://i.ytimg.com/vi/loopback-live-id/hqdefault_custom_3.jpg/xs",
 					"width": 168,
-					"height": 94
+					"height": 94,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/loopback-live-id/hqdefault_custom_3.jpg/lg",
 					"width": 336,
-					"height": 188
+					"height": 188,
+					"estimatedResolutionLevel": "MEDIUM"
 				}
 			]
 		},
@@ -68,6 +114,26 @@
 			"uploaderName": "The Shed Podcast",
 			"uploaderUrl": "https://www.youtube.com/channel/c3312",
 			"uploaderVerified": false,
+			"uploaderAvatars": [
+				{
+					"url": "https://yt3.ggpht.com/shed-avatar=s48-c-k-c0x00ffffff-no-rj",
+					"width": 48,
+					"height": 48,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/shed-avatar=s88-c-k-c0x00ffffff-no-rj",
+					"width": 88,
+					"height": 88,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/shed-avatar=s176-c-k-c0x00ffffff-no-rj",
+					"width": 176,
+					"height": 176,
+					"estimatedResolutionLevel": "MEDIUM"
+				}
+			],
 			"duration": 4925,
 			"viewCount": 51716,
 			"uploadDate": "2026-08-21T00:00Z",
@@ -77,12 +143,14 @@
 				{
 					"url": "https://i.ytimg.com/vi/two-devs-id/hqdefault.jpg/xs",
 					"width": 168,
-					"height": 94
+					"height": 94,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/two-devs-id/hqdefault.jpg/lg",
 					"width": 336,
-					"height": 188
+					"height": 188,
+					"estimatedResolutionLevel": "MEDIUM"
 				}
 			]
 		},
@@ -92,6 +160,26 @@
 			"uploaderName": "GLITCH and 2 more",
 			"uploaderUrl": "https://www.youtube.com/channel/c6347",
 			"uploaderVerified": false,
+			"uploaderAvatars": [
+				{
+					"url": "https://yt3.ggpht.com/glitch-avatar=s48-c-k-c0x00ffffff-no-rj",
+					"width": 48,
+					"height": 48,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/glitch-avatar=s88-c-k-c0x00ffffff-no-rj",
+					"width": 88,
+					"height": 88,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/glitch-avatar=s176-c-k-c0x00ffffff-no-rj",
+					"width": 176,
+					"height": 176,
+					"estimatedResolutionLevel": "MEDIUM"
+				}
+			],
 			"duration": 5640,
 			"viewCount": 1207909,
 			"uploadDate": "2026-08-20T00:00Z",
@@ -101,17 +189,20 @@
 				{
 					"url": "https://i.ytimg.com/vi/rerun-tapes-id/hqdefault_custom_1.jpg/xs",
 					"width": 168,
-					"height": 94
+					"height": 94,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/rerun-tapes-id/hqdefault_custom_1.jpg/md",
 					"width": 246,
-					"height": 138
+					"height": 138,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/rerun-tapes-id/hqdefault_custom_1.jpg/lg",
 					"width": 336,
-					"height": 188
+					"height": 188,
+					"estimatedResolutionLevel": "MEDIUM"
 				}
 			]
 		},
@@ -121,6 +212,26 @@
 			"uploaderName": "測試頻道",
 			"uploaderUrl": "https://www.youtube.com/channel/c4410",
 			"uploaderVerified": true,
+			"uploaderAvatars": [
+				{
+					"url": "https://yt3.ggpht.com/test-channel-avatar=s48-c-k-c0x00ffffff-no-rj",
+					"width": 48,
+					"height": 48,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/test-channel-avatar=s88-c-k-c0x00ffffff-no-rj",
+					"width": 88,
+					"height": 88,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/test-channel-avatar=s176-c-k-c0x00ffffff-no-rj",
+					"width": 176,
+					"height": 176,
+					"estimatedResolutionLevel": "MEDIUM"
+				}
+			],
 			"duration": 1933,
 			"viewCount": 31665,
 			"uploadDate": "2026-08-20T00:00Z",
@@ -130,12 +241,14 @@
 				{
 					"url": "https://i.ytimg.com/vi/unicode-title-id/hqdefault.jpg/xs",
 					"width": 168,
-					"height": 94
+					"height": 94,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/unicode-title-id/hqdefault.jpg/lg",
 					"width": 336,
-					"height": 188
+					"height": 188,
+					"estimatedResolutionLevel": "MEDIUM"
 				}
 			]
 		},
@@ -145,6 +258,26 @@
 			"uploaderName": "Off The Record & Off The Rails",
 			"uploaderUrl": "https://www.youtube.com/channel/c5590",
 			"uploaderVerified": true,
+			"uploaderAvatars": [
+				{
+					"url": "https://yt3.ggpht.com/off-the-record-avatar=s48-c-k-c0x00ffffff-no-rj",
+					"width": 48,
+					"height": 48,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/off-the-record-avatar=s88-c-k-c0x00ffffff-no-rj",
+					"width": 88,
+					"height": 88,
+					"estimatedResolutionLevel": "LOW"
+				},
+				{
+					"url": "https://yt3.ggpht.com/off-the-record-avatar=s176-c-k-c0x00ffffff-no-rj",
+					"width": 176,
+					"height": 176,
+					"estimatedResolutionLevel": "MEDIUM"
+				}
+			],
 			"duration": 1325,
 			"viewCount": 105207,
 			"uploadDate": "2026-08-20T00:00Z",
@@ -154,12 +287,14 @@
 				{
 					"url": "https://i.ytimg.com/vi/trailing-comma-id/hqdefault.jpg/xs",
 					"width": 168,
-					"height": 94
+					"height": 94,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/trailing-comma-id/hqdefault.jpg/lg",
 					"width": 336,
-					"height": 188
+					"height": 188,
+					"estimatedResolutionLevel": "MEDIUM"
 				}
 			]
 		},
@@ -169,6 +304,7 @@
 			"uploaderName": "",
 			"uploaderUrl": "",
 			"uploaderVerified": false,
+			"uploaderAvatars": [],
 			"duration": 0,
 			"viewCount": 0,
 			"uploadDate": null,
@@ -182,6 +318,7 @@
 			"uploaderName": "GLITCH",
 			"uploaderUrl": "https://www.youtube.com/channel/c1257",
 			"uploaderVerified": true,
+			"uploaderAvatars": [],
 			"duration": -1,
 			"viewCount": -1,
 			"uploadDate": "2026-08-19T00:00Z",
@@ -195,6 +332,7 @@
 			"uploaderName": "Red Herring Files",
 			"uploaderUrl": "https://www.youtube.com/channel/c7712",
 			"uploaderVerified": true,
+			"uploaderAvatars": [],
 			"duration": 5663,
 			"viewCount": 2061045,
 			"uploadDate": "2026-08-18T00:00Z",
@@ -204,22 +342,26 @@
 				{
 					"url": "https://i.ytimg.com/vi/cold-case-id/hqdefault_custom_2.jpg/xs",
 					"width": 168,
-					"height": 94
+					"height": 94,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/cold-case-id/hqdefault_custom_2.jpg/sm",
 					"width": 196,
-					"height": 110
+					"height": 110,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/cold-case-id/hqdefault_custom_2.jpg/md",
 					"width": 246,
-					"height": 138
+					"height": 138,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/cold-case-id/hqdefault_custom_2.jpg/lg",
 					"width": 336,
-					"height": 188
+					"height": 188,
+					"estimatedResolutionLevel": "MEDIUM"
 				}
 			]
 		},
@@ -229,6 +371,7 @@
 			"uploaderName": "Back Post",
 			"uploaderUrl": "https://www.youtube.com/channel/c8834",
 			"uploaderVerified": false,
+			"uploaderAvatars": [],
 			"duration": 840,
 			"viewCount": 159068,
 			"uploadDate": "2026-08-18T00:00Z",
@@ -238,12 +381,14 @@
 				{
 					"url": "https://i.ytimg.com/vi/deadline-digest-id/hqdefault.jpg/xs",
 					"width": 168,
-					"height": 94
+					"height": 94,
+					"estimatedResolutionLevel": "LOW"
 				},
 				{
 					"url": "https://i.ytimg.com/vi/deadline-digest-id/hqdefault.jpg/lg",
 					"width": 336,
-					"height": 188
+					"height": 188,
+					"estimatedResolutionLevel": "MEDIUM"
 				}
 			]
 		}

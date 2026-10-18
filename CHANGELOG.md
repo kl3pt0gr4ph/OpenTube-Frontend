@@ -6,6 +6,11 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Kiosk carousel cards on the landing page now show the uploader's channel avatar, with a placeholder fallback if the image fails to load. ([#74])
+- The channel name and avatar on kiosk cards link to the internal channel page. ([#74])
+
 ### Changed
 
 - Playback copes better with slow connections: the player buffers further ahead and waits for more video before resuming after a stall ([#65])
@@ -13,6 +18,7 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Videos start at a quality based on your connection's measured speed from previous videos, instead of a fixed guess ([#65])
 - The big Play button now uses the Shaka 5 play/pause/buffering play button ([#66])
 
+[#74]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/74
 [#66]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/66
 [#65]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/65
 

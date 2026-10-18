@@ -6,15 +6,16 @@
 
 import { describe, it, expect } from 'vitest';
 import { buildKioskItem } from '../../tests/fixtures/builder';
-import kioskVideosResponseFixture from '../../tests/fixtures/api/kioskResponse.json';
-import KioskVideosFixture from '../../tests/fixtures/adapters/kioskVideos.json';
+import kioskVideosResponseFixture from '../../tests/fixtures/api/kioskVideosApiResponse.json';
+import KioskVideosFixture from '../../tests/fixtures/adapters/kioskVideosAdaptedResponse.json';
 import { adaptKioskVideos, type KioskVideoConfig } from '$lib/adapters/kiosk';
 import type { KioskApiResponseItem } from '$lib/api/kiosk';
 
 const defaultThumbnail = 'fallback-thumb.jpg';
+const defaultAvatar = 'fallback-avatar.jpg';
 
 const adapt = (items: KioskApiResponseItem[] | undefined) =>
-	adaptKioskVideos(items, defaultThumbnail);
+	adaptKioskVideos(items, defaultThumbnail, defaultAvatar);
 
 describe('adaptKioskVideos', () => {
 	it('adapts a single item with all fields mapped', () => {
@@ -26,6 +27,8 @@ describe('adaptKioskVideos', () => {
 			url: 'https://www.youtube.com/watch?v=video1',
 			title: 'Test Video',
 			thumbnail: 'https://example.com/v1.jpg',
+			channelAvatar: 'fallback-avatar.jpg',
+			channelId: 'UCtest456',
 			channelName: 'Test Channel',
 			viewCount: 1000,
 			duration: 120,

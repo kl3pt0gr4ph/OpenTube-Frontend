@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { load } from './+page';
-import kioskResponseFixture from '../tests/fixtures/api/kioskResponse.json';
-import kioskVideosFixture from '../tests/fixtures/adapters/kioskVideos.json';
+import kioskResponseFixture from '../tests/fixtures/api/kioskVideosApiResponse.json';
+import kioskVideosFixture from '../tests/fixtures/adapters/kioskVideosAdaptedResponse.json';
 
 import type { KioskVideoConfig } from '$lib/adapters/kiosk';
 

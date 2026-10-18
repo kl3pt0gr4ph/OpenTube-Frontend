@@ -15,6 +15,7 @@ export interface KioskApiResponseItem {
 	url: string;
 	uploaderName: string;
 	uploaderUrl: string;
+	uploaderAvatars: Image[];
 	uploaderVerified: boolean;
 	duration: number;
 	viewCount: number;
