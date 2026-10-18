@@ -2,8 +2,10 @@ import type { PageLoad } from './$types';
 import { getKioskInfo, type KioskInfoApiResponse } from '$lib/api/kiosk';
 import { adaptKioskVideos, type KioskVideoConfig } from '$lib/adapters/kiosk';
 import defaultThumbnail from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
+import defaultAvatar from '$lib/assets/placeholders/logofallback.svg?raw';
 
 const DEFAULT_THUMBNAIL: string = defaultThumbnail;
+const DEFAULT_AVATAR: string = defaultAvatar;
 
 const KIOSKS = [
 	{ id: 'trending_gaming', title: 'Gaming' },
@@ -19,7 +21,6 @@ export interface KioskSection {
 }
 
 export const load: PageLoad = async ({ fetch }): Promise<{ sections: KioskSection[] }> => {
-	// allSettled, not all: one unavailable kiosk must not blank the whole page.
 	const results: PromiseSettledResult<KioskInfoApiResponse>[] = await Promise.allSettled(
 		KIOSKS.map(({ id }): Promise<KioskInfoApiResponse> => getKioskInfo(id, fetch))
 	);
@@ -34,7 +35,11 @@ export const load: PageLoad = async ({ fetch }): Promise<{ sections: KioskSectio
 			return;
 		}
 
-		const videos: KioskVideoConfig[] = adaptKioskVideos(result.value.items, DEFAULT_THUMBNAIL);
+		const videos: KioskVideoConfig[] = adaptKioskVideos(
+			result.value.items,
+			DEFAULT_THUMBNAIL,
+			DEFAULT_AVATAR
+		);
 		if (videos.length > 0) {
 			sections.push({ id, title, videos });
 		}

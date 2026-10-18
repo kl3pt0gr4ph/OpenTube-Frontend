@@ -7,7 +7,7 @@
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import { describe, it, expect, vi } from 'vitest';
 import KioskCarousel from './KioskCarousel.svelte';
-import kioskVideosFixture from '../../tests/fixtures/adapters/kioskVideos.json';
+import kioskVideosFixture from '../../tests/fixtures/adapters/kioskVideosAdaptedResponse.json';
 import type { KioskVideoConfig } from '$lib/adapters/kiosk';
 
 const mockKioskVideos: KioskVideoConfig[] = kioskVideosFixture;
@@ -47,17 +47,32 @@ describe('KioskCarousel', () => {
 	});
 
 	it('renders each thumbnail with its source', () => {
+		render(KioskCarousel, { props: props() });
+
+		for (const video of mockKioskVideos) {
+			expect(screen.getByAltText(`${video.title} thumbnail`)).toHaveAttribute(
+				'src',
+				video.thumbnail
+			);
+		}
+	});
+
+	it('renders each channel avatar with its source', () => {
 		const { container } = render(KioskCarousel, { props: props() });
 
-		const images = container.querySelectorAll('img');
-		expect(images).toHaveLength(mockKioskVideos.length);
-		images.forEach((img, i) => expect(img).toHaveAttribute('src', mockKioskVideos[i].thumbnail));
+		const withAvatar = mockKioskVideos.filter((v) => v.channelAvatar);
+		const avatars = container.querySelectorAll('img[alt=""]');
+
+		expect(avatars).toHaveLength(withAvatar.length);
+		avatars.forEach((img, i) => expect(img).toHaveAttribute('src', withAvatar[i].channelAvatar));
 	});
 
 	it('links each card to the video route', () => {
 		const { container } = render(KioskCarousel, { props: props() });
 
-		expect(container.querySelectorAll('a[href^="/video/"]')).toHaveLength(mockKioskVideos.length);
+		expect(container.querySelectorAll('a[href^="/video/"]')).toHaveLength(
+			mockKioskVideos.length * 2
+		);
 		expect(screen.getByRole('link', { name: heartbeat.title })).toHaveAttribute(
 			'href',
 			`/video/${heartbeat.id}`

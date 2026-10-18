@@ -87,7 +87,7 @@ export interface VideoPageData {
  */
 export const load: PageLoad = async ({ params, url, fetch }): Promise<VideoPageData> => {
 	try {
-		const playlistId = url.searchParams.get('playlist') ?? null;
+		const playlistId: string | null = url.searchParams.get('playlist') ?? null;
 		const playlistIndex: number | null = playlistId
 			? parseInt(url.searchParams.get('index') ?? '0', 10)
 			: null;
