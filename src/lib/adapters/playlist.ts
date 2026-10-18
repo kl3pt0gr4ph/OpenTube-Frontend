@@ -1,11 +1,11 @@
-import { extractIdFromUrl } from '$lib/utils/streamSelection';
-import { selectBestImage } from '$lib/utils/mediaUtils';
-import logoPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
-import bannerPlaceholder from '$lib/assets/placeholders/bannerFallback.svg?raw';
-import thumbnailPlaceholder from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
-import type { RelatedItemApiResponse } from '$lib/api/related';
-import type { PlaylistApiResponse } from '$lib/api/playlist';
-import type { RelatedVideoConfig } from '$lib/adapters/related';
+import { extractIdFromUrl } from '#lib/utils/streamSelection.js';
+import { selectBestImage } from '#lib/utils/mediaUtils.js';
+import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+import bannerPlaceholder from '#lib/assets/placeholders/bannerFallback.svg';
+import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
+import type { RelatedItemApiResponse } from '#lib/api/related.js';
+import type { PlaylistApiResponse } from '#lib/api/playlist.js';
+import type { RelatedVideoConfig } from '#lib/adapters/related.js';
 
 export interface PlaylistInfoConfig {
 	id: string;

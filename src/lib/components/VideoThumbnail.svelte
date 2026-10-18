@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatDuration } from '$lib/utils/formatters';
+	import { formatDuration } from '#lib/utils/formatters.js';
 
 	interface Props {
 		src: string;

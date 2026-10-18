@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { formatCount } from '$lib/utils/formatters';
+	import { formatCount } from '#lib/utils/formatters.js';
 	import { resolve } from '$app/paths';
-	import VideoThumbnail from '$lib/components/VideoThumbnail.svelte';
-	import videoCameraIcon from '$lib/assets/icons/videoCamera.svg?raw';
-	import type { ChannelVideoConfig } from '$lib/adapters/channel';
+	import VideoThumbnail from '#lib/components/VideoThumbnail.svelte';
+	import videoCameraIcon from '#lib/assets/icons/videoCamera.svg?raw';
+	import type { ChannelVideoConfig } from '#lib/adapters/channel.js';
 
 	let { videos }: { videos: ChannelVideoConfig[] } = $props();
 </script>

@@ -5,7 +5,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { selectBestImage } from './mediaUtils';
-import type { Image } from '$lib/types';
+import type { Image } from '#lib/types.js';
 
 const t: (url: string, width?: number) => Image = (url: string, width = 100): Image =>
 	({ url, width, height: Math.round((width * 9) / 16) }) as Image;

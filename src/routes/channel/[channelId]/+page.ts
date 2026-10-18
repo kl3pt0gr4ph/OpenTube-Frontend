@@ -1,7 +1,7 @@
 import type { PageLoad } from '../../$types';
-import { loadChannelData } from '$lib/loaders/channel';
-import type { ChannelConfig, ChannelVideoConfig } from '$lib/adapters/channel';
-import type { NextPage } from '$lib/api/types';
+import { loadChannelData } from '#lib/loaders/channel.js';
+import type { ChannelConfig, ChannelVideoConfig } from '#lib/adapters/channel.js';
+import type { NextPage } from '#lib/api/types.js';
 
 /**
  * Page load function - fetches channel info and videos in parallel :LoadEvent<RouteParams, null, {} '/'>

@@ -1,12 +1,12 @@
-import { getChannelInfo, getChannelVideos } from '$lib/api/channel';
+import { getChannelInfo, getChannelVideos } from '#lib/api/channel.js';
 import {
 	adaptChannelInfo,
 	adaptChannelVideos,
 	type ChannelConfig,
 	type ChannelVideoPage
-} from '$lib/adapters/channel';
-import thumbnailPlaceholder from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
-import logoPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
+} from '#lib/adapters/channel.js';
+import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
+import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 import { type ChannelPageData } from '../../routes/channel/[channelId]/+page';
 
 /**

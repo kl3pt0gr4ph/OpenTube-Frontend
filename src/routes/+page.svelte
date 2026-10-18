@@ -1,5 +1,5 @@
 <script lang="ts">
-	import KioskCarousel from '$lib/components/KioskCarousel.svelte';
+	import KioskCarousel from '#lib/components/KioskCarousel.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();

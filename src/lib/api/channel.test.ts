@@ -1,5 +1,5 @@
 import { describeJsonFetcher } from '../../tests/helpers/describeJsonFetcher';
-import { getChannelInfo, getChannelVideos, getChannelVideosNextPage } from '$lib/api/channel';
+import { getChannelInfo, getChannelVideos, getChannelVideosNextPage } from '#lib/api/channel.js';
 import channelDetailsApiResponseFixture from '../../tests/fixtures/api/channelDetailsApiResponse.json';
 import channelVideosApiResponseFixture from '../../tests/fixtures/api/channelVideosApiResponse.json';
 

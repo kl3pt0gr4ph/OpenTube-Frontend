@@ -2,9 +2,20 @@ import { defineConfig } from 'vitest/config';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import path from 'path';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import adapter from '@sveltejs/adapter-node';
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()],
+	plugins: [
+		!process.env.VITEST && tailwindcss(),
+		sveltekit({
+			preprocess: vitePreprocess(),
+			adapter: adapter({
+				precompress: false,
+				envPrefix: ''
+			})
+		})
+	],
 	server: {
 		port: parseInt(process.env.FRONTEND_PORT || '5173'),
 		strictPort: true

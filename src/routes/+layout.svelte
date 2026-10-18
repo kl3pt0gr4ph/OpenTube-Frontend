@@ -3,11 +3,11 @@
 	import { page } from '$app/state';
 	import 'shaka-player/dist/controls.css';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
-	import favicon from '$lib/assets/streaming-logo.png';
-	import Navbar from '$lib/components/navbar/Navbar.svelte';
-	import SearchResultsLoading from '$lib/components/search/SearchResultsLoading.svelte';
-	import VideoLoading from '$lib/components/video/VideoLoading.svelte';
-	import VideoListingsLoading from '$lib/components/video/VideoListingsLoading.svelte';
+	import favicon from '#lib/assets/streaming-logo.png';
+	import Navbar from '#lib/components/navbar/Navbar.svelte';
+	import SearchResultsLoading from '#lib/components/search/SearchResultsLoading.svelte';
+	import VideoLoading from '#lib/components/video/VideoLoading.svelte';
+	import VideoListingsLoading from '#lib/components/video/VideoListingsLoading.svelte';
 
 	// Navigation state
 	let isNavigating = $state(false);

@@ -3,13 +3,13 @@
  * Defaults are modelled on the real fixtures in src/tests/fixtures/api/.
  */
 
-import type { Avatar, Details, Image } from '$lib/types';
-import type { SearchApiResponse } from '$lib/api/search';
-import type { RelatedItemApiResponse } from '$lib/api/related';
-import type { CommentApiResponse, RelatedCommentApiResponseItem } from '$lib/api/comments';
-import type { ChannelInfoApiResponse, ChannelVideosApiResponse } from '$lib/api/channel';
-import type { PlaylistApiResponse } from '$lib/api/playlist';
-import type { KioskApiResponseItem } from '$lib/api/kiosk';
+import type { Avatar, Details, Image } from '#lib/types.js';
+import type { SearchApiResponse } from '#lib/api/search.js';
+import type { RelatedItemApiResponse } from '#lib/api/related.js';
+import type { CommentApiResponse, RelatedCommentApiResponseItem } from '#lib/api/comments.js';
+import type { ChannelInfoApiResponse, ChannelVideosApiResponse } from '#lib/api/channel.js';
+import type { PlaylistApiResponse } from '#lib/api/playlist.js';
+import type { KioskApiResponseItem } from '#lib/api/kiosk.js';
 
 // ---------------------------------------------------------------------------
 // Media primitives (exported — handy for mediaUtils/thumbnail tests too)

@@ -6,7 +6,7 @@ declare module 'shaka-player' {
 		ShakaPolyfill,
 		ShakaUIConfiguration,
 		ShakaUIOverlayClass
-	} from '$lib/player/shaka';
+	} from '#lib/player/shaka.js';
 
 	export const Player: ShakaPlayerClass;
 	export const ui: {
@@ -27,7 +27,7 @@ declare module 'shaka-player/dist/shaka-player.ui' {
 		ShakaPolyfill,
 		ShakaUIConfiguration,
 		ShakaUIOverlayClass
-	} from '$lib/player/shaka';
+	} from '#lib/player/shaka.js';
 
 	const shaka: {
 		Player: ShakaPlayerClass;

@@ -1,25 +1,25 @@
 import type { PageLoad } from './$types';
-import { getVideoDetails } from '$lib/api/details';
-import { getRelatedStreams } from '$lib/api/related';
-import { adaptPlayerConfig, type VideoPlayerConfig } from '$lib/adapters/player';
-import { adaptVideoMetadata, type VideoMetadata } from '$lib/adapters/metadata';
+import { getVideoDetails } from '#lib/api/details.js';
+import { getRelatedStreams } from '#lib/api/related.js';
+import { adaptPlayerConfig, type VideoPlayerConfig } from '#lib/adapters/player.js';
+import { adaptVideoMetadata, type VideoMetadata } from '#lib/adapters/metadata.js';
 import {
 	adaptRelatedItems,
 	type RelatedItemConfig,
 	type RelatedVideoConfig
-} from '$lib/adapters/related';
+} from '#lib/adapters/related.js';
 import {
 	adaptPlaylistInfo,
 	adaptPlaylistVideos,
 	type PlaylistInfoConfig
-} from '$lib/adapters/playlist';
-import thumbnailPlaceholder from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
-import logoPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
-import { getManifest } from '$lib/api/manifest';
-import { getVideoThumbnails } from '$lib/api/thumbnails';
-import { getPlaylist } from '$lib/api/playlist';
-import { getVideoComments } from '$lib/api/comments';
-import { adaptCommentResponse, type CommentConfig } from '$lib/adapters/comments';
+} from '#lib/adapters/playlist.js';
+import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
+import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+import { getManifest } from '#lib/api/manifest.js';
+import { getVideoThumbnails } from '#lib/api/thumbnails.js';
+import { getPlaylist } from '#lib/api/playlist.js';
+import { getVideoComments } from '#lib/api/comments.js';
+import { adaptCommentResponse, type CommentConfig } from '#lib/adapters/comments.js';
 
 interface ErrorPageData {
 	videoId: string;

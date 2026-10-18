@@ -3,26 +3,26 @@ import channelDetailsResponseFixture from '../../../tests/fixtures/api/channelDe
 import channelVideosResponseFixture from '../../../tests/fixtures/api/channelVideosApiResponse.json';
 import channelDetailsFixture from '../../../tests/fixtures/adapters/channelDetailsAdaptedResponse.json';
 import channelVideosFixture from '../../../tests/fixtures/adapters/channelVideosAdaptedResponse.json';
-import thumbnailFallback from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
+import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg';
 
 // Mock only the HTTP boundary — real adapters run so the full pipeline
 // (API response → adapter → page data) is exercised end-to-end.
-vi.mock('$lib/api/channel', () => ({
+vi.mock('#lib/api/channel.js', () => ({
 	getChannelInfo: vi.fn(),
 	getChannelVideos: vi.fn()
 }));
 
 // Mock asset imports (no real files available in test environment)
-vi.mock('$lib/assets/placeholder/thumbnailFallback.svg', () => ({
+vi.mock('#lib/assets/placeholder/thumbnailFallback.svg', () => ({
 	default: '/thumbnailFallback.svg'
 }));
 
-vi.mock('$lib/assets/placeholder/logofallback.svg', () => ({
+vi.mock('#lib/assets/placeholder/logofallback.svg', () => ({
 	default: '/logofallback.svg'
 }));
 
 // Mock extractIdFromUrl so URL parsing doesn't pull in unrelated deps
-vi.mock('$lib/utils/streamSelection', () => ({
+vi.mock('#lib/utils/streamSelection.js', () => ({
 	extractIdFromUrl: vi.fn((url: string) => {
 		const match = url.match(/[?&]v=([^&]+)/);
 		return match ? match[1] : (url.split('/').at(-1) ?? '');
@@ -34,9 +34,9 @@ import {
 	type ChannelVideosApiResponse,
 	getChannelInfo,
 	getChannelVideos
-} from '$lib/api/channel';
-import { loadChannelData } from '$lib/loaders/channel';
-import type { ChannelConfig, ChannelVideoPage } from '$lib/adapters/channel';
+} from '#lib/api/channel.js';
+import { loadChannelData } from '#lib/loaders/channel.js';
+import type { ChannelConfig, ChannelVideoPage } from '#lib/adapters/channel.js';
 
 const infoResponse = channelDetailsResponseFixture as unknown as ChannelInfoApiResponse;
 const videosResponse = channelVideosResponseFixture as unknown as ChannelVideosApiResponse;

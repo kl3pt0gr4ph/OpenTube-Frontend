@@ -14,7 +14,7 @@ import {
 import searchResponseFixture from '../../tests/fixtures/api/searchApiResponse.json';
 import searchResultFixture from '../../tests/fixtures/adapters/searchAdaptedResponse.json';
 
-import type { SearchApiResponse } from '$lib/api/search';
+import type { SearchApiResponse } from '#lib/api/search.js';
 
 const defaultThumbnail = 'default-thumbnail.jpg';
 const defaultAvatar = 'default-avatar.jpg';

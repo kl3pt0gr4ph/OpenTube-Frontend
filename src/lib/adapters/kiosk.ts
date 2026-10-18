@@ -1,6 +1,6 @@
-import { extractIdFromUrl } from '$lib/utils/streamSelection';
-import { selectBestImage } from '$lib/utils/mediaUtils';
-import type { KioskApiResponseItem } from '$lib/api/kiosk';
+import { extractIdFromUrl } from '#lib/utils/streamSelection.js';
+import { selectBestImage } from '#lib/utils/mediaUtils.js';
+import type { KioskApiResponseItem } from '#lib/api/kiosk.js';
 
 export interface KioskVideoConfig {
 	id: string;

@@ -12,7 +12,7 @@ import {
 	getSearchResultsNextPage,
 	type NextPageSearchApiResponse,
 	type SearchApiResponseData
-} from '$lib/api/search';
+} from '#lib/api/search.js';
 import { describe, it, expect, vi } from 'vitest';
 import { createSuccessfulFetch, extractQueryParams } from '../../tests/helpers/apiHelpers';
 

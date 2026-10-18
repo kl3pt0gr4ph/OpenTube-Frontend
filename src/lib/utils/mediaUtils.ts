@@ -1,4 +1,4 @@
-import type { Image } from '$lib/types';
+import type { Image } from '#lib/types.js';
 
 /**
  * Selects the best quality thumbnail from available options

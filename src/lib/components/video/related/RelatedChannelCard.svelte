@@ -1,8 +1,8 @@
 <script lang="ts">
-	import avatarPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
-	import { formatCount } from '$lib/utils/formatters';
+	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+	import { formatCount } from '#lib/utils/formatters.js';
 	import { resolve } from '$app/paths';
-	import type { RelatedChannelConfig } from '$lib/adapters/related';
+	import type { RelatedChannelConfig } from '#lib/adapters/related.js';
 
 	let { channel }: { channel: RelatedChannelConfig } = $props();
 

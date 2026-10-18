@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	import errorIcon from '$lib/assets/icons/error.svg?raw';
-	import warningIcon from '$lib/assets/icons/warning.svg?raw';
-	import infoIcon from '$lib/assets/icons/info.svg?raw';
-	import emptyIcon from '$lib/assets/icons/error.svg?raw';
+	import errorIcon from '#lib/assets/icons/error.svg?raw';
+	import warningIcon from '#lib/assets/icons/warning.svg?raw';
+	import infoIcon from '#lib/assets/icons/info.svg?raw';
+	import emptyIcon from '#lib/assets/icons/error.svg?raw';
 
 	type Variant = 'error' | 'warning' | 'info' | 'empty';
 

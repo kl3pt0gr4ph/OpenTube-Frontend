@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { formatCount } from '$lib/utils/formatters';
-	import avatarPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
+	import { formatCount } from '#lib/utils/formatters.js';
+	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import type { ChannelSearchResultConfig } from '$lib/adapters/search';
+	import type { ChannelSearchResultConfig } from '#lib/adapters/search.js';
 
 	let { result }: { result: ChannelSearchResultConfig } = $props();
 

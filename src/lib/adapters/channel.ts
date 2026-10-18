@@ -1,12 +1,12 @@
-import { extractIdFromUrl } from '$lib/utils/streamSelection';
-import { selectBestImage } from '$lib/utils/mediaUtils';
-import { formatCount } from '$lib/utils/formatters';
+import { extractIdFromUrl } from '#lib/utils/streamSelection.js';
+import { selectBestImage } from '#lib/utils/mediaUtils.js';
+import { formatCount } from '#lib/utils/formatters.js';
 import type {
 	ChannelInfoApiResponse,
 	ChannelVideoApiResponseItem,
 	ChannelVideosApiResponse
-} from '$lib/api/channel';
-import type { NextPage } from '$lib/api/types';
+} from '#lib/api/channel.js';
+import type { NextPage } from '#lib/api/types.js';
 
 /**
  * Format a raw subscriber count into a compact display string.

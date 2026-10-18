@@ -1,5 +1,5 @@
-import type { Details } from '$lib/types';
-import { selectBestImage } from '$lib/utils/mediaUtils';
+import type { Details } from '#lib/types.js';
+import { selectBestImage } from '#lib/utils/mediaUtils.js';
 
 export interface VideoMetadata {
 	title: string;

@@ -9,7 +9,7 @@ import { adaptComment, adaptComments, adaptCommentResponse } from './comments';
 import { buildCommentItem, buildCommentResponse, buildImage } from '../../tests/fixtures/builder';
 import commentsResponse from '../../tests/fixtures/api/commentsResponse.json';
 import commentsResultFixture from '../../tests/fixtures/adapters/commentsResult.json';
-import type { CommentApiResponse, RelatedCommentApiResponseItem } from '$lib/api/comments';
+import type { CommentApiResponse, RelatedCommentApiResponseItem } from '#lib/api/comments.js';
 
 const defaultAvatar = 'https://example.com/default-avatar.jpg';
 

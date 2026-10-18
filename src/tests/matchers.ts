@@ -31,8 +31,8 @@ expect.extend({
 });
 
 declare module 'vitest' {
-	interface Assertion {
-		toBeValidLanguageCode(): void;
-		toBeValidUrl(): void;
+	interface Matchers<R> {
+		toBeValidLanguageCode: () => R;
+		toBeValidUrl: () => R;
 	}
 }

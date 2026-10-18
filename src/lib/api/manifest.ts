@@ -1,6 +1,6 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { PUBLIC_API_URL } from '$app/env/public';
 import { DOMParser, type Document, type Element } from '@xmldom/xmldom';
-import { parseIsoDuration } from '$lib/utils/formatters';
+import { parseIsoDuration } from '#lib/utils/formatters.js';
 
 const API_BASE_URL: string = PUBLIC_API_URL;
 

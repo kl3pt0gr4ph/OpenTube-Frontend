@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/svelte';
 import Page from './+page.svelte';
 import type { PageData } from './$types';
 import searchAdaptedFixtureRaw from '../../tests/fixtures/adapters/searchAdaptedResponse.json';
-import type { SearchResultsPage } from '$lib/adapters/search';
+import type { SearchResultsPage } from '#lib/adapters/search.js';
 
 type Results = PageData['results'];
 const searchAdaptedFixture = searchAdaptedFixtureRaw as SearchResultsPage;

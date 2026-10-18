@@ -7,7 +7,7 @@
 
 import { describeJsonFetcher } from '../../tests/helpers/describeJsonFetcher';
 import detailsFixture from '../../tests/fixtures/api/detailsResponseFixture.json';
-import { getVideoDetails } from '$lib/api/details';
+import { getVideoDetails } from '#lib/api/details.js';
 
 describeJsonFetcher({
 	name: 'getVideoDetails',

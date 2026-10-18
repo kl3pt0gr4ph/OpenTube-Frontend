@@ -2,12 +2,12 @@
 	import type { PageData } from './$types';
 
 	import { onMount } from 'svelte';
-	import VideoPlayer from '$lib/components/video/VideoPlayer.svelte';
-	import VideoDetail from '$lib/components/video/VideoDetail.svelte';
-	import RelatedItemListings from '$lib/components/video/related/RelatedItemListings.svelte';
-	import ErrorCard from '$lib/components/ErrorCard.svelte';
-	import Comments from '$lib/components/video/Comments.svelte';
-	import PlaylistQueue from '$lib/components/video/PlaylistQueue.svelte';
+	import VideoPlayer from '#lib/components/video/VideoPlayer.svelte';
+	import VideoDetail from '#lib/components/video/VideoDetail.svelte';
+	import RelatedItemListings from '#lib/components/video/related/RelatedItemListings.svelte';
+	import ErrorCard from '#lib/components/ErrorCard.svelte';
+	import Comments from '#lib/components/video/Comments.svelte';
+	import PlaylistQueue from '#lib/components/video/PlaylistQueue.svelte';
 
 	let { data }: { data: PageData } = $props();
 

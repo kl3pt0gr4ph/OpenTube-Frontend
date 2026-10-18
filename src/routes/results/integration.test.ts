@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { load } from './+page';
 import searchResponseFixture from '../../tests/fixtures/api/searchApiResponse.json';
-import type { NextPage } from '$lib/api/types';
-import type { SearchResultConfig, VideoSearchResultConfig } from '$lib/adapters/search';
+import type { NextPage } from '#lib/api/types.js';
+import type { SearchResultConfig, VideoSearchResultConfig } from '#lib/adapters/search.js';
 
 interface LoadResponse {
 	results: {

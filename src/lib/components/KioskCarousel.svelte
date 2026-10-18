@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { formatCount } from '$lib/utils/formatters';
-	import VideoThumbnail from '$lib/components/VideoThumbnail.svelte';
-	import type { KioskVideoConfig } from '$lib/adapters/kiosk';
-	import logoPlaceholder from '$lib/assets/placeholders/logofallback.svg';
+	import { formatCount } from '#lib/utils/formatters.js';
+	import VideoThumbnail from '#lib/components/VideoThumbnail.svelte';
+	import type { KioskVideoConfig } from '#lib/adapters/kiosk.js';
+	import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 
 	interface Props {
 		title: string;

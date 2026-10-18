@@ -1,5 +1,5 @@
-import { selectBestImage } from '$lib/utils/mediaUtils';
-import type { CommentApiResponse, RelatedCommentApiResponseItem } from '$lib/api/comments';
+import { selectBestImage } from '#lib/utils/mediaUtils.js';
+import type { CommentApiResponse, RelatedCommentApiResponseItem } from '#lib/api/comments.js';
 
 /**
  * Comments result configuration for Comments component display

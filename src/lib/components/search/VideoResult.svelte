@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { formatCount, formatDate } from '$lib/utils/formatters';
-	import thumbnailPlaceholder from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
-	import avatarPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
-	import { extractIdFromUrl } from '$lib/utils/streamSelection';
+	import { formatCount, formatDate } from '#lib/utils/formatters.js';
+	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
+	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+	import { extractIdFromUrl } from '#lib/utils/streamSelection.js';
 	import { resolve } from '$app/paths';
-	import VideoThumbnail from '$lib/components/VideoThumbnail.svelte';
-	import type { VideoSearchResultConfig } from '$lib/adapters/search';
+	import VideoThumbnail from '#lib/components/VideoThumbnail.svelte';
+	import type { VideoSearchResultConfig } from '#lib/adapters/search.js';
 
 	let { result }: { result: VideoSearchResultConfig } = $props();
 

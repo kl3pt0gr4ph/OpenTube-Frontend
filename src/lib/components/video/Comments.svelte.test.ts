@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, fireEvent, waitFor } from '@testing-library/svelte';
 import '@testing-library/jest-dom';
 import Comments from './Comments.svelte';
-import type { CommentConfig } from '$lib/adapters/comments';
-import avatarFallback from '$lib/assets/placeholders/logofallback.svg';
+import type { CommentConfig } from '#lib/adapters/comments.js';
+import avatarFallback from '#lib/assets/placeholders/logofallback.svg';
 
-vi.mock('$lib/assets/logo-placeholder.svg', () => ({ default: '/logo-placeholder.svg' }));
+vi.mock('#lib/assets/logo-placeholder.svg', () => ({ default: '/logo-placeholder.svg' }));
 
 const baseComment: CommentConfig = {
 	id: 'comment-123',
