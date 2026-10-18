@@ -9,7 +9,7 @@ import { render, screen } from '@testing-library/svelte';
 import Page from './+page.svelte';
 import type { PageData } from './$types';
 import kioskVideosFixture from '../tests/fixtures/adapters/kioskVideosAdaptedResponse.json';
-import type { KioskVideoConfig } from '$lib/adapters/kiosk';
+import type { KioskVideoConfig } from '#lib/adapters/kiosk.js';
 
 const kioskVideos: KioskVideoConfig[] = kioskVideosFixture;
 

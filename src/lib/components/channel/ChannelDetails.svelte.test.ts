@@ -2,11 +2,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import ChannelDetails from './ChannelDetails.svelte';
 import channelDetailsFixture from '../../../tests/fixtures/adapters/channelDetailsAdaptedResponse.json';
-import type { ChannelConfig } from '$lib/adapters/channel';
-import avatarFallback from '$lib/assets/placeholders/logofallback.svg?raw';
+import type { ChannelConfig } from '#lib/adapters/channel.js';
+import avatarFallback from '#lib/assets/placeholders/logofallback.svg?raw';
 
 // Mock asset imports
-vi.mock('$lib/assets/logo-placeholder.svg', () => ({
+vi.mock('#lib/assets/logo-placeholder.svg', () => ({
 	default: '/placeholder-avatar.svg'
 }));
 

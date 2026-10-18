@@ -2,7 +2,7 @@
 	import RelatedVideoCard from './RelatedVideoCard.svelte';
 	import RelatedPlaylistCard from './RelatedPlaylistCard.svelte';
 	import RelatedChannelCard from './RelatedChannelCard.svelte';
-	import type { RelatedItemConfig } from '$lib/adapters/related';
+	import type { RelatedItemConfig } from '#lib/adapters/related.js';
 
 	let { items = [] }: { items?: RelatedItemConfig[] } = $props();
 </script>

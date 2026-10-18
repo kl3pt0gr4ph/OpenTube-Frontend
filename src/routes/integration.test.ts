@@ -3,7 +3,7 @@ import { load } from './+page';
 import kioskResponseFixture from '../tests/fixtures/api/kioskVideosApiResponse.json';
 import kioskVideosFixture from '../tests/fixtures/adapters/kioskVideosAdaptedResponse.json';
 
-import type { KioskVideoConfig } from '$lib/adapters/kiosk';
+import type { KioskVideoConfig } from '#lib/adapters/kiosk.js';
 
 interface LoadResponse {
 	sections: { id: string; title: string; videos: KioskVideoConfig[] }[];

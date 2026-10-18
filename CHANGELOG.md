@@ -17,7 +17,10 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The player prefers AV1, then VP9, then H.264, for more resolution at the same bandwidth ([#65])
 - Videos start at a quality based on your connection's measured speed from previous videos, instead of a fixed guess ([#65])
 - The big Play button now uses the Shaka 5 play/pause/buffering play button ([#66])
+- Upgraded to SvelteKit 3, adapter-node 6, Vite 8 and TypeScript 6; building from source now requires Node.js 22.17 or later. ([#71])
+- The Node server no longer reads the `ORIGIN` environment variable. ([#71])
 
+[#75]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/71
 [#74]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/74
 [#66]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/66
 [#65]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/65

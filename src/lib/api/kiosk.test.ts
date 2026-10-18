@@ -6,7 +6,7 @@
 
 import { describeJsonFetcher } from '../../tests/helpers/describeJsonFetcher';
 import kioskInfoResponseFixture from '../../tests/fixtures/api/kioskVideosApiResponse.json';
-import { getKioskInfo } from '$lib/api/kiosk';
+import { getKioskInfo } from '#lib/api/kiosk.js';
 import { describe, it, expect, vi } from 'vitest';
 
 describeJsonFetcher({

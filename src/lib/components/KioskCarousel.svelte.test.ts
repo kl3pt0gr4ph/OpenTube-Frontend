@@ -8,7 +8,7 @@ import { render, screen, fireEvent } from '@testing-library/svelte';
 import { describe, it, expect, vi } from 'vitest';
 import KioskCarousel from './KioskCarousel.svelte';
 import kioskVideosFixture from '../../tests/fixtures/adapters/kioskVideosAdaptedResponse.json';
-import type { KioskVideoConfig } from '$lib/adapters/kiosk';
+import type { KioskVideoConfig } from '#lib/adapters/kiosk.js';
 
 const mockKioskVideos: KioskVideoConfig[] = kioskVideosFixture;
 const [heartbeat] = mockKioskVideos;

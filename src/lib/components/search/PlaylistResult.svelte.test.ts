@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/svelte';
 import PlaylistResult from './PlaylistResult.svelte';
 import searchResultFixture from '../../../tests/fixtures/adapters/searchAdaptedResponse.json';
-import thumbnailFallback from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
+import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
 
 // Mock asset imports
-vi.mock('$lib/assets/thumbnail-placeholder.jpg', () => ({
+vi.mock('#lib/assets/thumbnail-placeholder.jpg', () => ({
 	default: '/placeholder-thumbnail.jpg'
 }));
 
@@ -17,9 +17,9 @@ vi.mock('$app/navigation', () => ({
 
 // Mock the playlist API fetcher — redirectToPlaylist fetches the playlist
 // to resolve the first video before navigating
-vi.mock('$lib/api/playlist');
-import { getPlaylist } from '$lib/api/playlist';
-import type { PlaylistSearchResultConfig } from '$lib/adapters/search';
+vi.mock('#lib/api/playlist.js');
+import { getPlaylist } from '#lib/api/playlist.js';
+import type { PlaylistSearchResultConfig } from '#lib/adapters/search.js';
 const mockGetPlaylist = vi.mocked(getPlaylist);
 
 const playlistFixture = searchResultFixture.items[3] as PlaylistSearchResultConfig;

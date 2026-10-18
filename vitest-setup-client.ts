@@ -1,7 +1,7 @@
 /**
  * Vitest Setup File - Client/Browser Tests
  *
- * Setup for client-side/browser tests (Playwright environment)
+ * Setup for client-side/browser tests (jsdom environment)
  * Runs before each client test suite.
  */
 
@@ -10,49 +10,59 @@ import '@testing-library/jest-dom/vitest';
 import './src/tests/matchers';
 import { memoryStorage } from './src/tests/helpers/memoryStorage';
 
-// Mock SvelteKit's $app/environment
-vi.mock('$app/environment', () => ({
+vi.mock('$app/env', () => ({
 	browser: true,
 	building: false,
 	dev: false,
 	version: 'test'
 }));
 
-// Mock SvelteKit's environment variables
-vi.mock('$env/static/public', () => {
-	return Promise.resolve({
-		PUBLIC_API_URL: 'http://localhost:8000/api/v1',
-		PUBLIC_PROXY_URL: 'http://localhost:8888'
-	});
-});
+vi.mock('$app/env/public', () => ({
+	PUBLIC_API_URL: 'http://localhost:8000/api/v1',
+	PUBLIC_PROXY_URL: 'http://localhost:8888'
+}));
 
-// Mock $app/stores if needed
-vi.mock('$app/stores', () => ({
+vi.mock('$app/state', () => ({
 	page: {
-		subscribe: vi.fn()
+		url: new URL('http://localhost/'),
+		params: {},
+		route: { id: null },
+		status: 200,
+		error: null,
+		data: {},
+		state: {},
+		form: undefined
 	},
 	navigating: {
-		subscribe: vi.fn()
+		from: null,
+		to: null,
+		type: null,
+		willUnload: null,
+		delta: null,
+		complete: null
 	},
 	updated: {
-		subscribe: vi.fn()
+		current: false,
+		check: vi.fn(async () => false)
 	}
 }));
 
 vi.mock('$app/navigation', () => ({
-	goto: vi.fn()
+	goto: vi.fn(() => Promise.resolve()),
+	refreshAll: vi.fn(() => Promise.resolve())
 }));
 
 vi.mock('$app/paths', () => ({
-	resolve: (route: string, params?: Record<string, string>) =>
-		params
+	resolve: (route: string, params?: Record<string, string>) => {
+		const path = params
 			? Object.entries(params).reduce(
-					(path, [key, value]) => path.replace(`[${key}]`, encodeURIComponent(value)),
+					(acc, [key, value]) => acc.replace(`[${key}]`, encodeURIComponent(value)),
 					route
 				)
-			: route,
-	base: '',
-	assets: ''
+			: route;
+		return path.startsWith('/') ? path : `/${path}`;
+	},
+	asset: (file: string) => `/${file}`
 }));
 
 beforeEach(() => {

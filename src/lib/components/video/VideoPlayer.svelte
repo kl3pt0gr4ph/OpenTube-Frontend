@@ -1,26 +1,26 @@
 <script lang="ts">
 	import { onMount, onDestroy, tick } from 'svelte';
 	import { SvelteURL } from 'svelte/reactivity';
-	import { browser } from '$app/environment';
-	import { PUBLIC_PROXY_URL } from '$env/static/public';
+	import { browser } from '$app/env';
+	import { PUBLIC_PROXY_URL } from '$app/env/public';
 	import VideoPlayerError, {
 		type ShakaErrorDetail
-	} from '$lib/components/video/VideoPlayerError.svelte';
-	import type { VideoPlayerConfig } from '$lib/adapters/player';
+	} from '#lib/components/video/VideoPlayerError.svelte';
+	import type { VideoPlayerConfig } from '#lib/adapters/player.js';
 	import type {
 		ShakaPlayerInstance,
 		ShakaRequest,
 		ShakaUIConfiguration,
 		ShakaUIOverlayInstance,
 		ShakaVariantChangedEvent
-	} from '$lib/player/shaka';
+	} from '#lib/player/shaka.js';
 	import {
 		DEFAULT_PREFERENCES,
 		loadPreferences,
 		savePreferences,
 		type PlayerPreferences
-	} from '$lib/player/preferences';
-	import { buildPlayerConfig } from '$lib/player/config';
+	} from '#lib/player/preferences.js';
+	import { buildPlayerConfig } from '#lib/player/config.js';
 
 	let { config }: { config: VideoPlayerConfig } = $props();
 

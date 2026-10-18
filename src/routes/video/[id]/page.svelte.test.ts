@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, within, fireEvent } from '@testing-library/svelte';
 import '@testing-library/jest-dom';
 import PageComponent from './+page.svelte';
-import type { RelatedVideoConfig, RelatedItemConfig } from '$lib/adapters/related';
-import type { CommentConfig } from '$lib/adapters/comments';
-import type { PlaylistInfoConfig } from '$lib/adapters/playlist';
+import type { RelatedVideoConfig, RelatedItemConfig } from '#lib/adapters/related.js';
+import type { CommentConfig } from '#lib/adapters/comments.js';
+import type { PlaylistInfoConfig } from '#lib/adapters/playlist.js';
 
 describe('+page.svelte', () => {
 	const mockPlayerConfig = {

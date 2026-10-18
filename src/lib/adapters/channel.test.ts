@@ -21,7 +21,7 @@ import channelDetailsResponseFixture from '../../tests/fixtures/api/channelDetai
 import channelVideosResponseFixture from '../../tests/fixtures/api/channelVideosApiResponse.json';
 import channelDetailsFixture from '../../tests/fixtures/adapters/channelDetailsAdaptedResponse.json';
 import channelVideosFixture from '../../tests/fixtures/adapters/channelVideosAdaptedResponse.json';
-import type { ChannelInfoApiResponse, ChannelVideosApiResponse } from '$lib/api/channel';
+import type { ChannelInfoApiResponse, ChannelVideosApiResponse } from '#lib/api/channel.js';
 
 const thumbnailFallback = 'fallback-thumb.jpg';
 const avatarFallback = 'fallback-avatar.jpg';

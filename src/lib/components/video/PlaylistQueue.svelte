@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { formatDuration } from '$lib/utils/formatters';
+	import { formatDuration } from '#lib/utils/formatters.js';
 	import { resolve } from '$app/paths';
 	import { tick } from 'svelte';
-	import type { RelatedVideoConfig } from '$lib/adapters/related';
+	import type { RelatedVideoConfig } from '#lib/adapters/related.js';
 
 	interface Props {
 		videos: RelatedVideoConfig[];

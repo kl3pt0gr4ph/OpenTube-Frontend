@@ -1,7 +1,7 @@
-import { PUBLIC_API_URL } from '$env/static/public';
-import type { RelatedItemApiResponse } from '$lib/api/related';
-import type { Description } from '$lib/types';
-import type { Image } from '$lib/api/types';
+import { PUBLIC_API_URL } from '$app/env/public';
+import type { RelatedItemApiResponse } from '#lib/api/related.js';
+import type { Description } from '#lib/types.js';
+import type { Image } from '#lib/api/types.js';
 
 const API_BASE_URL: string = PUBLIC_API_URL;
 

@@ -7,7 +7,7 @@ import manifestXmlFixture from '../../../tests/fixtures/api/manifestXmlFixture.x
 import relatedVideosFixture from '../../../tests/fixtures/api/relatedVideosResponse.json';
 import playlistResponseFixture from '../../../tests/fixtures/api/playlistResponse.json';
 import commentsResponseFixture from '../../../tests/fixtures/api/commentsResponse.json';
-import type { RelatedVideoConfig } from '$lib/adapters/related';
+import type { RelatedVideoConfig } from '#lib/adapters/related.js';
 
 const createMockManifestXml = (duration: string = 'PT2M56S'): string =>
 	manifestXmlFixture

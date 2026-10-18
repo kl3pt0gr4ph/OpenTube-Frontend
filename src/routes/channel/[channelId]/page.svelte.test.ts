@@ -4,21 +4,21 @@ import Page from './+page.svelte';
 import channelDetailsFixture from '../../../tests/fixtures/adapters/channelDetailsAdaptedResponse.json';
 import channelVideosFixture from '../../../tests/fixtures/adapters/channelVideosAdaptedResponse.json';
 
-vi.mock('$lib/components/channel/ChannelDetails.svelte', async () => ({
+vi.mock('#lib/components/channel/ChannelDetails.svelte', async () => ({
 	default: (await import('../../../tests/stubs/ChannelDetailsStub.svelte')).default
 }));
 
-vi.mock('$lib/components/channel/ChannelVideos.svelte', () => ({
+vi.mock('#lib/components/channel/ChannelVideos.svelte', () => ({
 	default: vi.fn(() => null)
 }));
 
-vi.mock('$lib/components/ErrorCard.svelte', () => ({
+vi.mock('#lib/components/ErrorCard.svelte', () => ({
 	default: vi.fn(() => null)
 }));
 
-import ChannelVideos from '$lib/components/channel/ChannelVideos.svelte';
-import ErrorCard from '$lib/components/ErrorCard.svelte';
-import type { ChannelConfig, ChannelVideoPage } from '$lib/adapters/channel';
+import ChannelVideos from '#lib/components/channel/ChannelVideos.svelte';
+import ErrorCard from '#lib/components/ErrorCard.svelte';
+import type { ChannelConfig, ChannelVideoPage } from '#lib/adapters/channel.js';
 import type { ChannelPageData } from './+page';
 
 const mockChannel = channelDetailsFixture as ChannelConfig;

@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import VideoResult from '$lib/components/search/VideoResult.svelte';
-	import ErrorCard from '$lib/components/ErrorCard.svelte';
-	import ChannelResult from '$lib/components/search/ChannelResult.svelte';
-	import PlaylistResult from '$lib/components/search/PlaylistResult.svelte';
-	import type { NextPage } from '$lib/api/types';
-	import { getSearchResultsNextPage } from '$lib/api/search';
-	import { adaptSearchResults, type SearchResultConfig } from '$lib/adapters/search';
-	import thumbnailPlaceholder from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
-	import avatarPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
+	import VideoResult from '#lib/components/search/VideoResult.svelte';
+	import ErrorCard from '#lib/components/ErrorCard.svelte';
+	import ChannelResult from '#lib/components/search/ChannelResult.svelte';
+	import PlaylistResult from '#lib/components/search/PlaylistResult.svelte';
+	import type { NextPage } from '#lib/api/types.js';
+	import { getSearchResultsNextPage } from '#lib/api/search.js';
+	import { adaptSearchResults, type SearchResultConfig } from '#lib/adapters/search.js';
+	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
+	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
 
 	let { data }: { data: PageData } = $props();
 

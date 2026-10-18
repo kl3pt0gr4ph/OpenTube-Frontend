@@ -14,7 +14,7 @@ import {
 import { buildRelatedItem, buildThumbnail } from '../../tests/fixtures/builder';
 import relatedVideosResponseFixture from '../../tests/fixtures/api/relatedVideosResponse.json';
 import relatedVideosFixture from '../../tests/fixtures/adapters/relatedVideosAdaptedResponse.json';
-import type { RelatedItemApiResponse } from '$lib/api/related';
+import type { RelatedItemApiResponse } from '#lib/api/related.js';
 
 const defaultThumbnail = 'fallback-thumb.jpg';
 const defaultAvatar = 'fallback-avatar.jpg';

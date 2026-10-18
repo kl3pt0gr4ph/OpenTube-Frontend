@@ -7,7 +7,7 @@ import adapter from '@sveltejs/adapter-node';
 
 export default defineConfig({
 	plugins: [
-		tailwindcss(),
+		!process.env.VITEST && tailwindcss(),
 		sveltekit({
 			preprocess: vitePreprocess(),
 			adapter: adapter({

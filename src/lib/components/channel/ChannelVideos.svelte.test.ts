@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import ChannelVideos from './ChannelVideos.svelte';
 import channelVideosFixture from '../../../tests/fixtures/adapters/channelVideosAdaptedResponse.json';
-import type { ChannelVideoConfig, ChannelVideoPage } from '$lib/adapters/channel';
+import type { ChannelVideoConfig, ChannelVideoPage } from '#lib/adapters/channel.js';
 
 const videoPage = channelVideosFixture as ChannelVideoPage;
 const videos = videoPage.items;

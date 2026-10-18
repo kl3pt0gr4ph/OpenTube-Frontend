@@ -1,8 +1,8 @@
 <script lang="ts">
-	import infoIcon from '$lib/assets/icons/info.svg?raw';
-	import warningIcon from '$lib/assets/icons/warning.svg?raw';
-	import errorIcon from '$lib/assets/icons/error.svg?raw';
-	import refreshIcon from '$lib/assets/icons/refresh.svg?raw';
+	import infoIcon from '#lib/assets/icons/info.svg?raw';
+	import warningIcon from '#lib/assets/icons/warning.svg?raw';
+	import errorIcon from '#lib/assets/icons/error.svg?raw';
+	import refreshIcon from '#lib/assets/icons/refresh.svg?raw';
 
 	type IconVariant = 'info' | 'warning' | 'error';
 

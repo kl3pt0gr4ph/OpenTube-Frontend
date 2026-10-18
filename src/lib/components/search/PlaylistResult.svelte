@@ -1,9 +1,9 @@
 <script lang="ts">
-	import thumbnailPlaceholder from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
+	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 	import { goto } from '$app/navigation';
-	import { getPlaylist } from '$lib/api/playlist';
+	import { getPlaylist } from '#lib/api/playlist.js';
 	import { resolve } from '$app/paths';
-	import type { PlaylistSearchResultConfig } from '$lib/adapters/search';
+	import type { PlaylistSearchResultConfig } from '#lib/adapters/search.js';
 
 	let { result }: { result: PlaylistSearchResultConfig } = $props();
 
@@ -42,7 +42,6 @@
 	>
 		<!-- Left side – stacked thumbnail (1/3) -->
 		<div class="col-span-1 flex items-start justify-center">
-			/
 			<div
 				role="button"
 				tabindex="0"
@@ -95,6 +94,7 @@
 			</div>
 			<p class="text-muted mb-1 text-sm">Playlist</p>
 			<!-- eslint-disable svelte/no-navigation-without-resolve -->
+			<!-- TODO: Replace href -->
 			<a
 				href={result.uploaderUrl}
 				target="_blank"

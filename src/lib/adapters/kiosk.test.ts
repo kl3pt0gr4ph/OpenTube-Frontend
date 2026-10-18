@@ -8,8 +8,8 @@ import { describe, it, expect } from 'vitest';
 import { buildKioskItem } from '../../tests/fixtures/builder';
 import kioskVideosResponseFixture from '../../tests/fixtures/api/kioskVideosApiResponse.json';
 import KioskVideosFixture from '../../tests/fixtures/adapters/kioskVideosAdaptedResponse.json';
-import { adaptKioskVideos, type KioskVideoConfig } from '$lib/adapters/kiosk';
-import type { KioskApiResponseItem } from '$lib/api/kiosk';
+import { adaptKioskVideos, type KioskVideoConfig } from '#lib/adapters/kiosk.js';
+import type { KioskApiResponseItem } from '#lib/api/kiosk.js';
 
 const defaultThumbnail = 'fallback-thumb.jpg';
 const defaultAvatar = 'fallback-avatar.jpg';

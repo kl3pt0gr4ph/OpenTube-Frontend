@@ -8,7 +8,7 @@ import { adaptVideoMetadata } from './metadata';
 import { buildVideoDetails } from '../../tests/fixtures/builder';
 import detailsResponseFixture from '../../tests/fixtures/api/detailsResponseFixture.json';
 import detailsResultFixture from '../../tests/fixtures/adapters/detailsResult.json';
-import type { Details } from '$lib/types';
+import type { Details } from '#lib/types.js';
 
 const defaultAvatar = 'https://example.com/default-avatar.jpg';
 

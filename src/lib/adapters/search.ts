@@ -1,6 +1,6 @@
-import { extractIdFromUrl } from '$lib/utils/streamSelection';
-import type { NextPage } from '$lib/api/types';
-import type { SearchApiResponse, SearchApiResponseData } from '$lib/api/search';
+import { extractIdFromUrl } from '#lib/utils/streamSelection.js';
+import type { NextPage } from '#lib/api/types.js';
+import type { SearchApiResponse, SearchApiResponseData } from '#lib/api/search.js';
 
 /**
  * Search result configuration for VideoResult component display

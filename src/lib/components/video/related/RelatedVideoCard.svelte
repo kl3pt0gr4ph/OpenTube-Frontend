@@ -1,10 +1,10 @@
 <script lang="ts">
-	import logoPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
-	import thumbnailPlaceholder from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
-	import { formatCount } from '$lib/utils/formatters';
+	import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
+	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
+	import { formatCount } from '#lib/utils/formatters.js';
 	import { resolve } from '$app/paths';
-	import VideoThumbnail from '$lib/components/VideoThumbnail.svelte';
-	import type { RelatedVideoConfig } from '$lib/adapters/related';
+	import VideoThumbnail from '#lib/components/VideoThumbnail.svelte';
+	import type { RelatedVideoConfig } from '#lib/adapters/related.js';
 
 	let { video }: { video: RelatedVideoConfig } = $props();
 

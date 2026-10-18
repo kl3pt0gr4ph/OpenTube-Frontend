@@ -1,5 +1,5 @@
-import { PUBLIC_API_URL } from '$env/static/public';
-import type { NextPage } from '$lib/api/types';
+import { PUBLIC_API_URL } from '$app/env/public';
+import type { NextPage } from '#lib/api/types.js';
 
 const API_BASE_URL = PUBLIC_API_URL;
 

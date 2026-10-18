@@ -1,15 +1,15 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import ChannelDetails from '$lib/components/channel/ChannelDetails.svelte';
-	import ErrorCard from '$lib/components/ErrorCard.svelte';
-	import type { ChannelTab } from '$lib/components/channel/ChannelDetails.svelte';
-	import ChannelVideos from '$lib/components/channel/ChannelVideos.svelte';
-	import type { NextPage } from '$lib/api/types';
-	import { adaptChannelVideos, type ChannelVideoConfig } from '$lib/adapters/channel';
-	import { getChannelVideosNextPage } from '$lib/api/channel';
-	import thumbnailPlaceholder from '$lib/assets/placeholders/thumbnailFallback.svg?raw';
-	import avatarPlaceholder from '$lib/assets/placeholders/logofallback.svg?raw';
-	import playlistIcon from '$lib/assets/icons/playlist.svg?raw';
+	import ChannelDetails from '#lib/components/channel/ChannelDetails.svelte';
+	import ErrorCard from '#lib/components/ErrorCard.svelte';
+	import type { ChannelTab } from '#lib/components/channel/ChannelDetails.svelte';
+	import ChannelVideos from '#lib/components/channel/ChannelVideos.svelte';
+	import type { NextPage } from '#lib/api/types.js';
+	import { adaptChannelVideos, type ChannelVideoConfig } from '#lib/adapters/channel.js';
+	import { getChannelVideosNextPage } from '#lib/api/channel.js';
+	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
+	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
+	import playlistIcon from '#lib/assets/icons/playlist.svg?raw';
 
 	let { data }: { data: PageData } = $props();
 

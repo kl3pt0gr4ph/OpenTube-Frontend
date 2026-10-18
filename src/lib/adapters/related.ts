@@ -1,7 +1,7 @@
-import { extractIdFromUrl } from '$lib/utils/streamSelection';
-import { selectBestImage } from '$lib/utils/mediaUtils';
+import { extractIdFromUrl } from '#lib/utils/streamSelection.js';
+import { selectBestImage } from '#lib/utils/mediaUtils.js';
 
-import type { RelatedItemApiResponse } from '$lib/api/related';
+import type { RelatedItemApiResponse } from '#lib/api/related.js';
 
 /**
  * Related video configuration for listings display

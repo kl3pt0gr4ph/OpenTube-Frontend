@@ -1,5 +1,5 @@
-import type { Details } from '$lib/types';
-import { PUBLIC_API_URL } from '$env/static/public';
+import type { Details } from '#lib/types.js';
+import { PUBLIC_API_URL } from '$app/env/public';
 
 const API_BASE_URL = PUBLIC_API_URL;
 

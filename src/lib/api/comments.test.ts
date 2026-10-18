@@ -7,7 +7,7 @@
 
 import { describeJsonFetcher } from '../../tests/helpers/describeJsonFetcher';
 import commentFixture from '../../tests/fixtures/api/commentsResponse.json';
-import { getVideoComments } from '$lib/api/comments';
+import { getVideoComments } from '#lib/api/comments.js';
 
 describeJsonFetcher({
 	name: 'getComments',
