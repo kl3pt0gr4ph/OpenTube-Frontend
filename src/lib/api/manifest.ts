@@ -1,6 +1,6 @@
-import { PUBLIC_API_URL } from '$app/env/public';
-import { DOMParser } from '@xmldom/xmldom';
-import { parseIsoDuration } from '#lib/utils/formatters.js';
+import { PUBLIC_API_URL } from '$env/static/public';
+import { DOMParser, type Document, type Element } from '@xmldom/xmldom';
+import { parseIsoDuration } from '$lib/utils/formatters';
 
 const API_BASE_URL: string = PUBLIC_API_URL;
 
@@ -72,7 +72,7 @@ export async function getManifest(
 
 		const parser = new DOMParser();
 		const xmlDoc: Document = parser.parseFromString(manifestXml, 'text/xml');
-		const mpdElement: Element = xmlDoc.getElementsByTagNameNS(DASH_NAMESPACE, 'MPD')[0];
+		const mpdElement: Element | undefined = xmlDoc.getElementsByTagNameNS(DASH_NAMESPACE, 'MPD')[0];
 
 		const durationStr: string | null = mpdElement?.getAttribute('mediaPresentationDuration');
 		const duration: number = parseIsoDuration(durationStr);
