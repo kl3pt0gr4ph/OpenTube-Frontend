@@ -1,5 +1,5 @@
 <script lang="ts">
-	import roundLogo from '#lib/assets/placeholders/logofallback.svg?raw';
+	import roundLogo from '#lib/assets/placeholders/logofallback.svg';
 	import { sanitizeHtml } from '#lib/sanitize.js';
 	import type { VideoMetadata } from '#lib/adapters/metadata.js';
 

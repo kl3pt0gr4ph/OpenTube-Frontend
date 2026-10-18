@@ -1,5 +1,5 @@
 <script lang="ts">
-	import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
+	import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 	import videoCameraIcon from '#lib/assets/icons/videoCamera.svg?raw';
 	import playlistIcon from '#lib/assets/icons/playlist.svg?raw';
 

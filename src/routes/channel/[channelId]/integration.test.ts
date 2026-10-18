@@ -3,7 +3,7 @@ import channelDetailsResponseFixture from '../../../tests/fixtures/api/channelDe
 import channelVideosResponseFixture from '../../../tests/fixtures/api/channelVideosApiResponse.json';
 import channelDetailsFixture from '../../../tests/fixtures/adapters/channelDetailsAdaptedResponse.json';
 import channelVideosFixture from '../../../tests/fixtures/adapters/channelVideosAdaptedResponse.json';
-import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
+import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg';
 
 // Mock only the HTTP boundary — real adapters run so the full pipeline
 // (API response → adapter → page data) is exercised end-to-end.

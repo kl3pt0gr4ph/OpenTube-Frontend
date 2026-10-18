@@ -13,8 +13,8 @@ import {
 	adaptPlaylistVideos,
 	type PlaylistInfoConfig
 } from '#lib/adapters/playlist.js';
-import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
-import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
+import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
+import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 import { getManifest } from '#lib/api/manifest.js';
 import { getVideoThumbnails } from '#lib/api/thumbnails.js';
 import { getPlaylist } from '#lib/api/playlist.js';

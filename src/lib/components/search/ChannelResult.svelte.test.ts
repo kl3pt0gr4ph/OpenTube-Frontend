@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/svelte';
 import { adaptSearchResults, type ChannelSearchResultConfig } from '#lib/adapters/search.js';
 import ChannelResult from './ChannelResult.svelte';
 import channelSearchResultFixtures from '../../../tests/fixtures/adapters/channelSearchResult.json';
-import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
+import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 
 vi.mock('#lib/assets/logo-placeholder.svg', () => ({
 	default: '/placeholder-avatar.svg'

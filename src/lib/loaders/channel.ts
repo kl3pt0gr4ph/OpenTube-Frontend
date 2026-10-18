@@ -5,8 +5,8 @@ import {
 	type ChannelConfig,
 	type ChannelVideoPage
 } from '#lib/adapters/channel.js';
-import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
-import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
+import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
+import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 import { type ChannelPageData } from '../../routes/channel/[channelId]/+page';
 
 /**

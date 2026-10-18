@@ -7,8 +7,8 @@
 	import type { NextPage } from '#lib/api/types.js';
 	import { adaptChannelVideos, type ChannelVideoConfig } from '#lib/adapters/channel.js';
 	import { getChannelVideosNextPage } from '#lib/api/channel.js';
-	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
-	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
+	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
+	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 	import playlistIcon from '#lib/assets/icons/playlist.svg?raw';
 
 	let { data }: { data: PageData } = $props();

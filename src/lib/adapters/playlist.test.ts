@@ -8,9 +8,9 @@
 import { describe, it, expect } from 'vitest';
 import { adaptPlaylistInfo, adaptPlaylistVideos, type PlaylistInfoConfig } from './playlist';
 import { buildPlaylistResponse, buildRelatedItem } from '../../tests/fixtures/builder';
-import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
-import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
-import bannerPlaceholder from '#lib/assets/placeholders/bannerFallback.svg?raw';
+import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg';
+import bannerPlaceholder from '#lib/assets/placeholders/bannerFallback.svg';
 import type { PlaylistApiResponse } from '#lib/api/playlist.js';
 import type { RelatedVideoConfig } from '#lib/adapters/related.js';
 

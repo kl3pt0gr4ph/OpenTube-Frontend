@@ -31,7 +31,7 @@ expect.extend({
 });
 
 declare module 'vitest' {
-	interface Matchers<R, T> {
+	interface Matchers<R> {
 		toBeValidLanguageCode: () => R;
 		toBeValidUrl: () => R;
 	}

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg?raw';
-	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
+	import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 	import { formatCount } from '#lib/utils/formatters.js';
 	import { resolve } from '$app/paths';
 	import VideoThumbnail from '#lib/components/VideoThumbnail.svelte';

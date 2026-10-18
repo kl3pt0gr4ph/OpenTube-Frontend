@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import VideoResult from './VideoResult.svelte';
 import searchResultFixtures from '../../../tests/fixtures/adapters/searchAdaptedResponse.json';
-import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
-import avatarFallback from '#lib/assets/placeholders/logofallback.svg?raw';
+import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg';
+import avatarFallback from '#lib/assets/placeholders/logofallback.svg';
 import type { VideoSearchResultConfig } from '#lib/adapters/search.js';
 
 // Mock asset imports

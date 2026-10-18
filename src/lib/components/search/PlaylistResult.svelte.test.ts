@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/svelte';
 import PlaylistResult from './PlaylistResult.svelte';
 import searchResultFixture from '../../../tests/fixtures/adapters/searchAdaptedResponse.json';
-import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
+import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg';
 
 // Mock asset imports
 vi.mock('#lib/assets/thumbnail-placeholder.jpg', () => ({

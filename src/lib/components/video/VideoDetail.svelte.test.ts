@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest';
 import VideoDetail from './VideoDetail.svelte';
 import videoDetailsFixture from '../../../tests/fixtures/adapters/detailsResult.json';
 import type { VideoMetadata } from '#lib/adapters/metadata.js';
-import avatarFallback from '#lib/assets/placeholders/logofallback.svg?raw';
+import avatarFallback from '#lib/assets/placeholders/logofallback.svg';
 
 const mockMetadata: VideoMetadata = videoDetailsFixture[0];
 const mockNoAvatarLargeNumbers: VideoMetadata = videoDetailsFixture[1];

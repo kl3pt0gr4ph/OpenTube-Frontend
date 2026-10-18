@@ -1,5 +1,5 @@
 <script lang="ts">
-	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg?raw';
+	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { getPlaylist } from '#lib/api/playlist.js';
