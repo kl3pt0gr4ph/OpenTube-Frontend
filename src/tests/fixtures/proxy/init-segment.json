@@ -1,0 +1,35 @@
+{
+	"description": "Initialisation segment and sidx index: the first request Shaka makes for a SegmentBase representation",
+	"synthetic": true,
+	"recordedAt": null,
+	"request": {
+		"path": "/videoplayback",
+		"query": "expire=1761339600&ei=Xy7aZ1-QH8OCvdIP4p2u0Ak&ip=0.0.0.0&id=o-AMx3cQ9vZ2Rk&itag=137&aitags=133%2C134%2C135%2C136%2C137&source=youtube&requiressl=yes&mime=video%2Fmp4&dur=212.045&lmt=1700000000000000&keepalive=yes&sparams=expire%2Cei%2Cip%2Cid%2Caitags%2Csource%2Crequiressl%2Cmime%2Cdur%2Clmt&sig=AJfQdSswRgIhAOk6t7h3F1x_2Z%3D%3D&lsparams=met%2Cmh%2Cmm%2Cmn&lsig=APaTxxMwRQIgB9%3D%3D",
+		"range": "0-740"
+	},
+	"upstream": {
+		"status": 206,
+		"headers": {
+			"last-modified": "Tue, 14 Nov 2023 22:13:20 GMT",
+			"content-type": "video/mp4",
+			"date": "Sat, 24 Oct 2026 12:00:00 GMT",
+			"expires": "Sat, 24 Oct 2026 12:00:00 GMT",
+			"cache-control": "private, max-age=21299",
+			"accept-ranges": "bytes",
+			"content-length": "741",
+			"content-range": "bytes 0-740/98113457",
+			"connection": "keep-alive",
+			"alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+			"vary": "Origin",
+			"cross-origin-resource-policy": "cross-origin",
+			"x-content-type-options": "nosniff",
+			"server": "gvs 1.0",
+			"access-control-allow-origin": "https://www.youtube.com",
+			"access-control-allow-credentials": "true",
+			"access-control-expose-headers": "Client-Protocol, Content-Length, Content-Type, X-Bandwidth-Est, X-Bandwidth-Est2, X-Bandwidth-Est3, X-Bandwidth-App-Limited, X-Bandwidth-Est-App-Limited, X-Bandwidth-Est-Comp, X-Bandwidth-Avg, X-Head-Time-Millis, X-Head-Time-Sec, X-Head-Seqnum, X-Response-Itag, X-Restrict-Formats-Hint, X-Sequence-Num, X-Segment-Lmt, X-Walltime-Ms",
+			"timing-allow-origin": "https://www.youtube.com",
+			"x-restrict-formats-hint": "None"
+		},
+		"bodyBase64": "AB8+XXybutn4FzZVdJOy0fAPLk1si6rJ6AcmRWSDosHg/x49XHuaudj3FjVUc5Kx0O8OLUxriqnI5wYlRGOCocDf/h08W3qZuNf2FTRTcpGwz+4NLEtqiajH5gUkQ2KBoL/e/Rw7WnmYt9b1FDNScZCvzu0MK0ppiKfG5QQjQmGAn77d/Bs6WXiXttX0EzJRcI+uzewLKkloh6bF5AMiQWB/nr3c+xo5WHeWtdTzEjFQb46tzOsKKUhnhqXE4wIhQF9+nbzb+hk4V3aVtNPyETBPbo2sy+oJKEdmhaTD4gEgP159nLva+Rg3VnWUs9LxEC9ObYyryukIJ0ZlhKPC4QEgP159nLva+Rg3VnWUs9LxEC9ObYyryukIJ0ZlhKPC4QAfPl18m7rZ+Bc2VXSTstHwDy5NbIuqyegHJkVkg6LB4P8ePVx7mrnY9xY1VHOSsdDvDi1Ma4qpyOcGJURjgqHA3/4dPFt6mbjX9hU0U3KRsM/uDSxLaomox+YFJENigaC/3v0cO1p5mLfW9RQzUnGQr87tDCtKaYinxuUEI0JhgJ++3fwbOll4l7bV9BMyUXCPrs3sCypJaIemxeQDIkFgf5693PsaOVh3lrXU8xIxUG+OrczrCilIZ4alxOMCIUBffp282/oZOFd2lbTT8hEwT26NrMvqCShHZoWkw+ICIUBffp282/oZOFd2lbTT8hEwT26NrMvqCShHZoWkw+IBID9efZy72vkYN1Z1lLPS8RAvTm2Mq8rpCCdGZYSjwuEAHz5dfJu62fgXNlV0k7LR8A8uTWyLqsnoByZFZIOiweD/Hj1ce5q52PcWNVRzkrHQ7w4tTGuKqcjnBiVEY4KhwN/+HTxbepm41/YVNFNykbDP7g0sS2qJqMfmBSRDYoGgv979HDtaeZi31vUUM1JxkK/O7QwrSmmIp8blBCNCYYCfvt38GzpZeJe21fQTMlFwj67N7AsqSWiHpsXkAyJBYH+e"
+	}
+}
