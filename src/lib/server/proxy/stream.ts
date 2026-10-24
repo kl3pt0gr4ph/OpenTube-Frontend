@@ -184,9 +184,11 @@ export async function proxyStream(
 	options: StreamProxyOptions = {}
 ): Promise<Response> {
 	const mountPath: string = options.mountPath ?? '/proxy';
-	const upstreamOrigin: (host: string) => string = options.upstreamOrigin ?? ((host: string): string => `https://${host}`);
+	const upstreamOrigin: (host: string) => string =
+		options.upstreamOrigin ?? ((host: string): string => `https://${host}`);
 	const fetchUpstream: UpstreamFetch =
-		options.fetch ?? ((url: URL, init: RequestInit): Promise<Response> => globalThis.fetch(url, init));
+		options.fetch ??
+		((url: URL, init: RequestInit): Promise<Response> => globalThis.fetch(url, init));
 	const headersTimeoutMs: number = options.headersTimeoutMs ?? DEFAULT_HEADERS_TIMEOUT_MS;
 	const maxRedirects: number = options.maxRedirects ?? DEFAULT_MAX_REDIRECTS;
 
@@ -274,5 +276,7 @@ export async function proxyStream(
 	const encoding: string | null = upstream.headers.get('content-encoding');
 	if (encoding && encoding.toLowerCase() !== 'identity') responseHeaders.delete('content-length');
 
-	return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
+	const body: ReadableStream<Uint8Array> | null =
+		upstream.body?.pipeThrough(new TransformStream<Uint8Array, Uint8Array>()) ?? null;
+	return new Response(body, { status: upstream.status, headers: responseHeaders });
 }
