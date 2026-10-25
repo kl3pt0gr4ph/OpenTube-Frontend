@@ -7,23 +7,17 @@ ARG PUBLIC_API_URL=/api
 ARG PUBLIC_PROXY_URL=/proxy
 
 
-# Make API URL available during build
 ENV PUBLIC_API_URL=$PUBLIC_API_URL
 ENV PUBLIC_PROXY_URL=$PUBLIC_PROXY_URL
 
-# Copy package files
 COPY package*.json ./
 
-# Install dependencies
 RUN npm ci
 
-# Copy source code and environment files
 COPY . .
 
-# Build the application in production mode
 RUN npm run build:ci
 
-# Remove dev dependencies
 RUN npm prune --omit=dev
 
 # Production stage
@@ -36,12 +30,12 @@ COPY --from=builder /app/build ./build
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 
-# Expose port
+# Expose port (its own default is 3000)
 EXPOSE 3636
 
-# Health check
+# Health check /health answers from the frontend alone, without rendering a page or calling the API
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3636', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+    CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || 3636) + '/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
 
 # Start the application
 CMD ["node", "build"]
