@@ -704,3 +704,4 @@ vite.config.ts.timestamp-*
 
 # Vitest
 coverage
+coverage/

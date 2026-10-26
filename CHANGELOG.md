@@ -6,6 +6,30 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- The stream proxy now runs inside the frontend at `/proxy`, replacing the separate Go OpenTubeStreamProxy service. Segment requests are same-origin, so CORS no longer applies. ([#86])
+- Proxied responses include `server-timing: upstream;dur=…` and `x-upstream-status` headers, so slow or failing googlevideo nodes show up in DevTools. ([#86])
+- The app now serves the backend API itself at `/api`, to the address in the `API_URL` environment variable. A reverse proxy can point straight at the frontend container. ([#88])
+- `GET /health` answers `200 healthy` without calling the backend or rendering a page. ([#88])
+
+### Changed
+
+- Seeking or leaving a video now closes the upstream googlevideo download straight away, including before the first byte arrives. ([#86])
+- The proxy follows googlevideo redirects itself instead of passing them to the browser. ([#86])
+- Only media-related response headers are forwarded; cookies, CORS and other upstream headers are dropped. ([#86])
+- Invalid `host` or `range` parameters are rejected with `400` (or `416`) before any request is made to googlevideo. ([#86])
+- `X-Frame-Options: SAMEORIGIN` and `X-Content-Type-Options: nosniff` are now set by the app on every response. ([#88])
+- The Docker `HEALTHCHECK` uses `/health` instead of `/`, which rendered the home page and called the API on every check. ([#88])
+- The image sets `PORT=3636`, matching the exposed port. ([#88])
+
+### Removed
+
+Deployments no longer need the proxy container: route `/proxy` to the frontend instead, keeping the `/proxy` prefix. ([#86])
+
+[#86]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/88
+[#86]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/86
+
 ## [0.5.0] - 2026-10-18
 
 ### Added
@@ -22,8 +46,8 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Upgraded to SvelteKit 3, adapter-node 6, Vite 8 and TypeScript 6; building from source now requires Node.js 22.17 or later. ([#71])
 - The Node server no longer reads the `ORIGIN` environment variable. ([#71])
 
-[#75]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/71
 [#74]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/74
+[#71]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/71
 [#66]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/66
 [#65]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/65
 
