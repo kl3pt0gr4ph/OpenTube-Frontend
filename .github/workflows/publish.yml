@@ -16,8 +16,6 @@ on:
 
 env:
   IMAGE_NAME: mrtumble/opentube-frontend
-  PUBLIC_API_URL: /api
-  PUBLIC_PROXY_URL: /proxy
 
 jobs:
   publish:
@@ -70,9 +68,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            PUBLIC_API_URL=${{ env.PUBLIC_API_URL }}
-            PUBLIC_PROXY_URL=${{ env.PUBLIC_PROXY_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
