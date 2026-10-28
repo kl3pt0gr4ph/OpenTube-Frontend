@@ -8,6 +8,7 @@
 	import SearchResultsLoading from '#lib/components/search/SearchResultsLoading.svelte';
 	import VideoLoading from '#lib/components/video/VideoLoading.svelte';
 	import VideoListingsLoading from '#lib/components/video/VideoListingsLoading.svelte';
+	import ChannelLoading from '#lib/components/channel/ChannelLoading.svelte';
 
 	// Navigation state
 	let isNavigating = $state(false);
@@ -31,9 +32,11 @@
 	 * Route patterns:
 	 *  - '/results' -> Search results page
 	 *  - '/video/[id]' -> Video player page
+	 *  - '/channel/[channelId] -> Channel page
 	 */
 	const isNavigatingToSearch = $derived(isNavigating && targetRouteId === '/results');
 	const isNavigatingToVideo = $derived(isNavigating && targetRouteId === '/video/[id]');
+	const isNavigatingToChannel = $derived(isNavigating && targetRouteId === '/channels/[channelId]');
 
 	const isLanding = $derived(page.route.id === '/');
 
@@ -56,16 +59,19 @@
 				<SearchResultsLoading count={10} />
 			</div>
 		{:else if isNavigatingToVideo}
-			<div class="mt-4 flex h-screen w-full pt-16">
-				<section class="flex w-2/3 flex-col items-start justify-start">
+			<div class="mt-4 flex min-h-screen w-full pt-16">
+				<section class="flex w-full flex-col items-start justify-start lg:w-2/3">
 					<div class="w-full p-4 sm:p-6 lg:p-8">
-						<!-- Show loading state during navigation -->
 						<VideoLoading />
 					</div>
 				</section>
-				<aside class="mt-4 flex w-1/3 flex-col gap-5 pt-16">
+				<aside class="mt-4 hidden flex-col gap-5 pt-16 lg:flex lg:w-1/3">
 					<VideoListingsLoading />
 				</aside>
+			</div>
+		{:else if isNavigatingToChannel}
+			<div class="pt-16">
+				<ChannelLoading />
 			</div>
 		{:else}
 			<div class="pt-16">
