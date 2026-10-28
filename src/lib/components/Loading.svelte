@@ -1,15 +1,16 @@
 <script lang="ts">
+	let { label = 'Loading…' }: { label?: string } = $props();
 </script>
 
-<div class="flex h-32 items-center justify-center">
-	<svg
-		class="mr-3 -ml-1 h-8 w-8 animate-spin text-white"
-		xmlns="http://www.w3.org/2000/svg"
-		fill="none"
-		viewBox="0 0 24 24"
-	>
-		<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
-		></circle>
-		<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5-5-5-5v4a8 8 0 00-8 8z" />
-	</svg>
+<div
+	class="flex min-h-[60vh] w-full flex-col items-center justify-center gap-4 px-4"
+	role="status"
+	aria-busy="true"
+	aria-live="polite"
+>
+	<div
+		class="h-24 w-24 animate-spin rounded-full border-6 border-white/10 border-t-[#ff0000]"
+		aria-hidden="true"
+	></div>
+	<p class="text-secondary text-sm">{label}</p>
 </div>
