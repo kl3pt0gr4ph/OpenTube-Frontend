@@ -9,20 +9,25 @@
 	import VideoLoading from '#lib/components/video/VideoLoading.svelte';
 	import VideoListingsLoading from '#lib/components/video/VideoListingsLoading.svelte';
 	import ChannelLoading from '#lib/components/channel/ChannelLoading.svelte';
+	import Loading from '#lib/components/Loading.svelte';
+
+	const SKELETON_ROUTES = new Set(['/results', '/video/[id]', '/channel/[id]']);
+
+	// This is so the generic loader does not show for fast page navigation
+	const GENERIC_LOADER_DELAY_MS = 200;
 
 	// Navigation state
 	let isNavigating = $state(false);
 	let targetRouteId = $state<string | null>(null);
 
 	beforeNavigate((navigation) => {
-		if (navigation.to) {
+		if (navigation.to && navigation.willUnload) {
 			isNavigating = true;
 			targetRouteId = navigation.to.route.id;
 		}
 	});
 
 	afterNavigate(() => {
-		// isNavigating = false;
 		targetRouteId = null;
 	});
 
@@ -32,11 +37,26 @@
 	 * Route patterns:
 	 *  - '/results' -> Search results page
 	 *  - '/video/[id]' -> Video player page
-	 *  - '/channel/[channelId] -> Channel page
+	 *  - '/channel/[id]' -> Channel page
+	 *  - anything else -> generic loader
 	 */
 	const isNavigatingToSearch = $derived(isNavigating && targetRouteId === '/results');
 	const isNavigatingToVideo = $derived(isNavigating && targetRouteId === '/video/[id]');
-	const isNavigatingToChannel = $derived(isNavigating && targetRouteId === '/channels/[channelId]');
+	const isNavigatingToChannel = $derived(isNavigating && targetRouteId === '/channels/[id]');
+	const isNavigatingToOther = $derived(
+		isNavigating && targetRouteId !== null && !SKELETON_ROUTES.has(targetRouteId)
+	);
+
+	let showGenericLoader = $state(false);
+
+	$effect(() => {
+		if (!isNavigatingToOther) {
+			showGenericLoader = false;
+			return;
+		}
+		const timer = setTimeout(() => (showGenericLoader = true), GENERIC_LOADER_DELAY_MS);
+		return () => clearTimeout(timer);
+	});
 
 	const isLanding = $derived(page.route.id === '/');
 
@@ -72,6 +92,10 @@
 		{:else if isNavigatingToChannel}
 			<div class="pt-16">
 				<ChannelLoading />
+			</div>
+		{:else if showGenericLoader}
+			<div class="pt-16">
+				<Loading />
 			</div>
 		{:else}
 			<div class="pt-16">
