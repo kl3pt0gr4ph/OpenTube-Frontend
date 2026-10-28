@@ -9,9 +9,12 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - The stream proxy now runs inside the frontend at `/proxy`, replacing the separate Go OpenTubeStreamProxy service. Segment requests are same-origin, so CORS no longer applies. ([#86])
-- Proxied responses include `server-timing: upstream;dur=…` and `x-upstream-status` headers, so slow or failing googlevideo nodes show up in DevTools. ([#86])
+- Proxied responses include `server-timing: upstream;dur=...` and `x-upstream-status` headers, so slow or failing googlevideo nodes show up in DevTools. ([#86])
 - The app now serves the backend API itself at `/api`, to the address in the `API_URL` environment variable. A reverse proxy can point straight at the frontend container. ([#88])
 - `GET /health` answers `200 healthy` without calling the backend or rendering a page. ([#88])
+- Loading skeleton for the landing page, mirroring the kiosk carousel layout. ([#91])
+- Loading skeleton for the channel page, mirroring the channel header, tab bar and video grid. ([#91])
+- Generic `PageLoading` spinner shown for routes without a dedicated skeleton, after a 200ms delay so fast navigations don't flash it. ([#91])
 
 ### Changed
 
@@ -22,12 +25,19 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `X-Frame-Options: SAMEORIGIN` and `X-Content-Type-Options: nosniff` are now set by the app on every response. ([#88])
 - The Docker `HEALTHCHECK` uses `/health` instead of `/`, which rendered the home page and called the API on every check. ([#88])
 - The image sets `PORT=3636`, matching the exposed port. ([#88])
+- Route-to-skeleton mapping in the root layout is now driven by a `SKELETON_ROUTES` set; unlisted routes fall back to the generic loader. ([#91])
+- The root layout's full-width/max-width container now follows the route being loaded, so skeletons render in the same container as the page that replaces them. ([#91])
 
 ### Removed
 
-Deployments no longer need the proxy container: route `/proxy` to the frontend instead, keeping the `/proxy` prefix. ([#86])
+- Deployments no longer need the proxy container: route `/proxy` to the frontend instead, keeping the `/proxy` prefix. ([#86])
 
-[#86]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/88
+### Fixed
+
+- Loading skeletons no longer appear for full-page unloads such as external links and reloads. ([#91])
+
+[#91]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/91
+[#88]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/88
 [#86]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/86
 
 ## [0.5.0] - 2026-10-18
