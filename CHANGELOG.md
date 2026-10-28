@@ -6,6 +6,8 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-28
+
 ### Added
 
 - The stream proxy now runs inside the frontend at `/proxy`, replacing the separate Go OpenTubeStreamProxy service. Segment requests are same-origin, so CORS no longer applies. ([#86])
@@ -122,7 +124,8 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Navigating between videos reloads the player in place instead of rebuilding it.
 - Fixed a teardown race condition that could produce intermittent errors when navigating away from a video.
 
-[Unreleased]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.2.0...v0.3.0
