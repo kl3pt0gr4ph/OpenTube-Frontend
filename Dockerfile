@@ -3,7 +3,7 @@ FROM node:24-alpine AS builder
 
 WORKDIR /app
 
-ARG PUBLIC_API_URL=/api
+ARG PUBLIC_API_URL=/api/v1
 ARG PUBLIC_PROXY_URL=/proxy
 
 
