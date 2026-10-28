@@ -10,8 +10,9 @@
 	import VideoListingsLoading from '#lib/components/video/VideoListingsLoading.svelte';
 	import ChannelLoading from '#lib/components/channel/ChannelLoading.svelte';
 	import Loading from '#lib/components/Loading.svelte';
+	import LandingLoading from '#lib/components/LandingLoading.svelte';
 
-	const SKELETON_ROUTES = new Set(['/results', '/video/[id]', '/channel/[id]']);
+	const SKELETON_ROUTES = new Set(['/results', '/video/[id]', '/channel/[channelId]']);
 
 	// This is so the generic loader does not show for fast page navigation
 	const GENERIC_LOADER_DELAY_MS = 200;
@@ -35,14 +36,16 @@
 	 * Determine which loading skeleton to show based on navigation target
 	 *
 	 * Route patterns:
+	 *  - '/' -> Landing page
 	 *  - '/results' -> Search results page
 	 *  - '/video/[id]' -> Video player page
-	 *  - '/channel/[id]' -> Channel page
+	 *  - '/channel/[channelId]' -> Channel page
 	 *  - anything else -> generic loader
 	 */
+	const isNavigatingToLanding = $derived(isNavigating && targetRouteId === '/');
 	const isNavigatingToSearch = $derived(isNavigating && targetRouteId === '/results');
 	const isNavigatingToVideo = $derived(isNavigating && targetRouteId === '/video/[id]');
-	const isNavigatingToChannel = $derived(isNavigating && targetRouteId === '/channels/[id]');
+	const isNavigatingToChannel = $derived(isNavigating && targetRouteId === '/channels/[channelId]');
 	const isNavigatingToOther = $derived(
 		isNavigating && targetRouteId !== null && !SKELETON_ROUTES.has(targetRouteId)
 	);
@@ -58,7 +61,13 @@
 		return () => clearTimeout(timer);
 	});
 
-	const isLanding = $derived(page.route.id === '/');
+	const displayedRouteId = $derived(
+		targetRouteId && (SKELETON_ROUTES.has(targetRouteId) || showGenericLoader)
+			? targetRouteId
+			: page.route.id
+	);
+
+	const isLanding = $derived(displayedRouteId === '/');
 
 	let { children } = $props();
 </script>
@@ -74,7 +83,11 @@
 		<div class="fixed inset-x-0 top-0 z-40">
 			<Navbar />
 		</div>
-		{#if isNavigatingToSearch}
+		{#if isNavigatingToLanding}
+			<div class="pt-16">
+				<LandingLoading />
+			</div>
+		{:else if isNavigatingToSearch}
 			<div class="pt-16">
 				<SearchResultsLoading count={10} />
 			</div>
