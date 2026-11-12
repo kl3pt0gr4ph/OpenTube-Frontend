@@ -6,7 +6,11 @@
 	import PlaylistResult from '#lib/components/search/PlaylistResult.svelte';
 	import type { NextPage } from '#lib/api/types.js';
 	import { getSearchResultsNextPage } from '#lib/api/search.js';
-	import { adaptSearchResults, dedupeResults, type SearchResultConfig } from '#lib/adapters/search.js';
+	import {
+		adaptSearchResults,
+		dedupeResults,
+		type SearchResultConfig
+	} from '#lib/adapters/search.js';
 	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 
