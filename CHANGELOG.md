@@ -6,6 +6,10 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- Search page no longer crashes with a duplicate key error when the search API returns the same result more than once, either within a page or after "Load more".
+
 ## [0.6.2] - 2026-10-28
 
 ### Fixed

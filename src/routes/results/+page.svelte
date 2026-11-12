@@ -6,7 +6,11 @@
 	import PlaylistResult from '#lib/components/search/PlaylistResult.svelte';
 	import type { NextPage } from '#lib/api/types.js';
 	import { getSearchResultsNextPage } from '#lib/api/search.js';
-	import { adaptSearchResults, type SearchResultConfig } from '#lib/adapters/search.js';
+	import {
+		adaptSearchResults,
+		dedupeResults,
+		type SearchResultConfig
+	} from '#lib/adapters/search.js';
 	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 
@@ -23,7 +27,7 @@
 	let loadMoreError = $state<string | null>(null);
 
 	$effect(() => {
-		items = data.results?.items ?? [];
+		items = dedupeResults(data.results?.items ?? []);
 		nextPage = data.results?.nextPage ?? null;
 		loadMoreError = null;
 	});
@@ -43,7 +47,7 @@
 				sortFilter
 			);
 			const adapted = adaptSearchResults(nextPageData, thumbnailPlaceholder, avatarPlaceholder);
-			items = [...items, ...adapted.items];
+			items = dedupeResults([...items, ...adapted.items]);
 			nextPage = adapted.nextPage;
 		} catch (err) {
 			loadMoreError = err instanceof Error ? err.message : 'Failed to load more results';
@@ -85,7 +89,7 @@
 		<!-- Results List -->
 	{:else}
 		<div class="space-y-4">
-			{#each items as result (result.id)}
+			{#each items as result (`${result.type}:${result.id}`)}
 				{#if result.type === 'channel'}
 					<ChannelResult {result} />
 				{:else if result.type === 'playlist'}
