@@ -156,3 +156,13 @@ export function adaptSearchResults(
 		hasNextPage: searchResult?.hasNextPage
 	};
 }
+
+export function dedupeResults(list: SearchResultConfig[]): SearchResultConfig[] {
+	const seen = new Set<string>();
+	return list.filter((r) => {
+		const key = `${r.type}:${r.id}`;
+		if (seen.has(key)) return false;
+		seen.add(key);
+		return true;
+	});
+}
