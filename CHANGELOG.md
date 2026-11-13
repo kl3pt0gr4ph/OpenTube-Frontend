@@ -6,9 +6,13 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.6.3] - 2026-11-13
+
 ### Fixed
 
-- Search page no longer crashes with a duplicate key error when the search API returns the same result more than once, either within a page or after "Load more".
+- Search page no longer crashes with a duplicate key error when the search API returns the same result more than once, either within a page or after "Load more". ([#105])
+
+[#105]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/105
 
 ## [0.6.2] - 2026-10-28
 
@@ -140,7 +144,8 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Navigating between videos reloads the player in place instead of rebuilding it.
 - Fixed a teardown race condition that could produce intermittent errors when navigating away from a video.
 
-[Unreleased]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.6.2...HEAD
+[Unreleased]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.6.3...HEAD
+[0.6.3]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/compare/v0.5.0...v0.6.0
