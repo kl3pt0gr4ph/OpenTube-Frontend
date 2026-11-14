@@ -85,5 +85,5 @@ describe('channel tab requests', () => {
 		expect(params.get('pageUrl')).toBe(nextPage.url);
 		expect(params.get('pageBody')).toBe(nextPage.body);
 		expect(params.getAll('pageIds')).toEqual(nextPage.ids);
-	})
+	});
 });

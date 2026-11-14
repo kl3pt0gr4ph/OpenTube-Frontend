@@ -9,12 +9,16 @@ import {
 	formatSubscriberCount,
 	adaptChannelInfo,
 	adaptChannelVideos,
+	adaptChannelTab,
+	adaptChannelTabs,
 	type ChannelVideoConfig,
 	type ChannelVideoPage
 } from './channel';
 import {
 	buildChannelDetailsResponse,
 	buildChannelVideosResponse,
+	buildChannelPlaylistItem,
+	buildChannelTabResponse,
 	buildRelatedItem
 } from '../../tests/fixtures/builder';
 import channelDetailsResponseFixture from '../../tests/fixtures/api/channelDetailsApiResponse.json';
@@ -156,6 +160,112 @@ describe('adaptChannelInfo', () => {
 	});
 });
 
+describe('adaptChannelTabs', () => {
+	const tab = (name: string) => ({ url: '', id: 'UCtest456', contentFilters: [name] });
+
+	it('lists the supported tabs the channel has, in display order', () => {
+		const tabs = [tab('playlists'), tab('shorts'), tab('videos'), tab('podcasts')];
+
+		expect(adaptChannelTabs(tabs)).toEqual(['videos', 'shorts', 'playlists']);
+	});
+
+	it.each([
+		['no tabs', []],
+		['missing tabs', undefined]
+	])('falls back to the videos tab for %s', (_label, tabs) => {
+		expect(adaptChannelTabs(tabs)).toEqual(['videos']);
+	});
+});
+
+describe('adaptChannelTab', () => {
+	it('adapts each item by its infoType and drops types it does not know', () => {
+		const response = buildChannelTabResponse({
+			items: [
+				buildRelatedItem(),
+				buildChannelPlaylistItem(),
+				{
+					infoType: 'CHANNEL',
+					url: 'https://www.youtube.com/channel/UCfeatured',
+					name: 'Featured Channel',
+					description: null,
+					subscriberCount: 1200,
+					streamCount: -1,
+					verified: true,
+					thumbnails: []
+				},
+				{ ...buildRelatedItem(), infoType: 'COMMENT' }
+			]
+		});
+
+		const { items } = adaptChannelTab(response, thumbnailFallback, avatarFallback);
+
+		expect(items).toEqual([
+			expect.objectContaining({ type: 'video', id: 'video1', isLive: false }),
+			{
+				type: 'playlist',
+				id: 'PLtest123',
+				title: 'Test Playlist',
+				thumbnail: 'https://example.com/playlist.jpg',
+				streamCount: 8,
+				uploaderId: 'UCtest456',
+				uploaderName: 'Test Channel'
+			},
+			{
+				type: 'channel',
+				id: 'UCfeatured',
+				name: 'Featured Channel',
+				avatar: avatarFallback,
+				subscriberCount: 1200,
+				verified: true
+			}
+		]);
+	});
+
+	it.each([
+		['unknown count', { streamCount: -1 }, 'streamCount', 0],
+		['missing thumbnails', { thumbnails: [] }, 'thumbnail', thumbnailFallback],
+		['missing uploader', { uploaderName: null, uploaderUrl: null }, 'uploaderId', '']
+	])('falls back for a playlist with %s', (_label, override, field, expected) => {
+		const response = buildChannelTabResponse({ items: [buildChannelPlaylistItem(override)] });
+
+		const [playlist] = adaptChannelTab(response, thumbnailFallback, avatarFallback).items;
+
+		expect(playlist[field as keyof typeof playlist]).toBe(expected);
+	});
+
+	it.each([
+		['livestreams', -1, true],
+		['livestreams', 3600, false],
+		['shorts', -1, false]
+	])('on the %s tab a stream with duration %d has isLive %s', (tab, duration, isLive) => {
+		const response = buildChannelTabResponse({ tab, items: [buildRelatedItem({ duration })] });
+
+		const [video] = adaptChannelTab(response, thumbnailFallback, avatarFallback).items;
+
+		expect(video).toMatchObject({ type: 'video', isLive });
+	});
+
+	it('returns an empty page, not an error, for an empty tab', () => {
+		const response = buildChannelTabResponse({ items: [], nextPage: null });
+
+		expect(adaptChannelTab(response, thumbnailFallback, avatarFallback)).toEqual({
+			items: [],
+			nextPage: null
+		});
+		expect(adaptChannelTab(null, thumbnailFallback, avatarFallback)).toEqual({
+			items: [],
+			nextPage: null
+		});
+	});
+
+	it('passes the continuation page through', () => {
+		const nextPage = { url: 'https://example.com/browse', body: 'token', ids: ['a', 'b', 'c'] };
+		const response = buildChannelTabResponse({ nextPage });
+
+		expect(adaptChannelTab(response, thumbnailFallback, avatarFallback).nextPage).toEqual(nextPage);
+	});
+});
+
 describe('adaptChannelVideos', () => {
 	it('adapts a single item with all fields mapped', () => {
 		const response = buildChannelVideosResponse({ items: [buildRelatedItem()] });
@@ -168,6 +278,7 @@ describe('adaptChannelVideos', () => {
 
 		expect(result.items).toHaveLength(1);
 		expect(result.items[0]).toEqual({
+			type: 'video',
 			id: 'video1',
 			title: 'Test Video',
 			thumbnail: 'https://example.com/v1.jpg',
@@ -176,7 +287,8 @@ describe('adaptChannelVideos', () => {
 			uploadedDate: '2 weeks ago',
 			duration: 120,
 			viewCount: 1000,
-			isShort: false
+			isShort: false,
+			isLive: false
 		});
 	});
 

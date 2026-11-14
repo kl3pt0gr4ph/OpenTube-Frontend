@@ -3,6 +3,7 @@
 	"channelId": "glitch-channel-id",
 	"items": [
 		{
+			"infoType": "STREAM",
 			"url": "https://www.youtube.com/watch?v=glitch-video-1",
 			"name": "Fitting In at School",
 			"uploaderName": "GLITCH",
@@ -26,6 +27,7 @@
 			]
 		},
 		{
+			"infoType": "STREAM",
 			"url": "https://www.youtube.com/watch?v=glitch-video-2",
 			"name": "Digital Circus Ep 9 Finale [TRAILER]",
 			"uploaderName": "GLITCH",
@@ -49,6 +51,7 @@
 			]
 		},
 		{
+			"infoType": "STREAM",
 			"url": "https://www.youtube.com/watch?v=glitch-video-3",
 			"name": "Caine's Requiem",
 			"uploaderName": "GLITCH",

@@ -3,10 +3,15 @@ import { selectBestImage } from '#lib/utils/mediaUtils.js';
 import { formatCount } from '#lib/utils/formatters.js';
 import type {
 	ChannelInfoApiResponse,
+	ChannelPlaylistApiResponseItem,
+	ChannelTabApiResponse,
+	ChannelTabApiResponseItem,
+	ChannelTabChannelApiResponseItem,
 	ChannelVideoApiResponseItem,
 	ChannelVideosApiResponse
 } from '#lib/api/channel.js';
-import type { NextPage } from '#lib/api/types.js';
+import { CHANNEL_TABS, type ChannelTabName, type NextPage } from '#lib/api/types.js';
+import type { RelatedPlaylistConfig } from '#lib/adapters/related.js';
 
 /**
  * Format a raw subscriber count into a compact display string.
@@ -43,6 +48,7 @@ export interface ChannelConfig {
 }
 
 export interface ChannelVideoConfig {
+	type: 'video';
 	id: string;
 	title: string;
 	thumbnail: string;
@@ -52,6 +58,26 @@ export interface ChannelVideoConfig {
 	duration: number;
 	viewCount: number;
 	isShort: boolean;
+	isLive: boolean;
+}
+
+export type ChannelPlaylistConfig = RelatedPlaylistConfig;
+
+export interface ChannelTabChannelConfig {
+	type: 'channel';
+	id: string;
+	name: string;
+	avatar: string;
+	subscriberCount: number;
+	verified: boolean;
+}
+
+export type ChannelTabItemConfig =
+	ChannelVideoConfig | ChannelPlaylistConfig | ChannelTabChannelConfig;
+
+export interface ChannelTabPage {
+	items: ChannelTabItemConfig[];
+	nextPage: NextPage | null;
 }
 
 /**
@@ -75,14 +101,34 @@ export function adaptChannelInfo(
 }
 
 /**
+ * List the tabs a channel has that the frontend can render, in display order.
+ * Falls back to the videos tab when the channel reports none.
+ */
+export function adaptChannelTabs(
+	tabs: ChannelInfoApiResponse['tabs'] | undefined
+): ChannelTabName[] {
+	const available = new Set<string>(
+		(tabs ?? []).flatMap((tab): string[] =>
+			(tab?.contentFilters ?? []).map((filter: string): string => filter.toLowerCase())
+		)
+	);
+	const supported: ChannelTabName[] = CHANNEL_TABS.filter((tab: ChannelTabName): boolean =>
+		available.has(tab)
+	);
+	return supported.length > 0 ? supported : ['videos'];
+}
+
+/**
  * Adapt a single raw ChannelVideoItem into a ChannelVideoConfig.
  */
 function adaptChannelVideo(
 	video: ChannelVideoApiResponseItem,
 	thumbnailFallback: string,
-	avatarFallback: string
+	avatarFallback: string,
+	isLive: boolean = false
 ): ChannelVideoConfig {
 	return {
+		type: 'video',
 		id: extractIdFromUrl(video.url),
 		title: video.name || 'Untitled',
 		thumbnail: video.thumbnails?.[video.thumbnails.length - 1]?.url ?? thumbnailFallback,
@@ -91,7 +137,94 @@ function adaptChannelVideo(
 		uploadedDate: video.textualUploadDate || '',
 		duration: Math.max(0, video.duration ?? 0),
 		viewCount: Math.max(0, video.viewCount ?? 0),
-		isShort: video.isShortFormContent ?? false
+		isShort: video.isShortFormContent ?? false,
+		isLive
+	};
+}
+
+function adaptChannelPlaylist(
+	playlist: ChannelPlaylistApiResponseItem,
+	thumbnailFallback: string
+): ChannelPlaylistConfig {
+	return {
+		type: 'playlist',
+		id: extractIdFromUrl(playlist.url),
+		title: playlist.name || 'Untitled',
+		thumbnail: selectBestImage(playlist.thumbnails, thumbnailFallback),
+		streamCount: Math.max(0, playlist.streamCount ?? 0),
+		uploaderId: extractIdFromUrl(playlist.uploaderUrl ?? ''),
+		uploaderName: playlist.uploaderName ?? ''
+	};
+}
+
+function adaptChannelTabChannel(
+	channel: ChannelTabChannelApiResponseItem,
+	avatarFallback: string
+): ChannelTabChannelConfig {
+	return {
+		type: 'channel',
+		id: extractIdFromUrl(channel.url),
+		name: channel.name || 'Unknown Channel',
+		avatar: selectBestImage(channel.thumbnails, avatarFallback),
+		subscriberCount: Math.max(0, channel.subscriberCount ?? 0),
+		verified: channel.verified ?? false
+	};
+}
+
+/**
+ * Adapt one channel tab item, dispatching on its `infoType`.
+ * Returns null for a type the frontend doesn't know or an item without an id.
+ */
+function adaptChannelTabItem(
+	item: ChannelTabApiResponseItem,
+	thumbnailFallback: string,
+	avatarFallback: string,
+	isLivestreamsTab: boolean
+): ChannelTabItemConfig | null {
+	if (!extractIdFromUrl(item?.url)) return null;
+
+	switch (item.infoType) {
+		case 'STREAM':
+			// The API doesn't say whether a stream is live. On the livestreams tab,
+			// finished streams have a duration; live and upcoming ones don't.
+			return adaptChannelVideo(
+				item,
+				thumbnailFallback,
+				avatarFallback,
+				isLivestreamsTab && (item.duration ?? 0) <= 0
+			);
+		case 'PLAYLIST':
+			return adaptChannelPlaylist(item, thumbnailFallback);
+		case 'CHANNEL':
+			return adaptChannelTabChannel(item, avatarFallback);
+		default:
+			return null;
+	}
+}
+
+function adaptNextPage(nextPage: NextPage | null | undefined): NextPage | null {
+	return nextPage?.url || nextPage?.body ? nextPage : null;
+}
+
+/**
+ * Adapt one page of any channel tab (videos, shorts, livestreams, playlists, albums).
+ */
+export function adaptChannelTab(
+	response: ChannelTabApiResponse | null,
+	thumbnailFallback: string,
+	avatarFallback: string
+): ChannelTabPage {
+	if (!response?.items) return { items: [], nextPage: null };
+
+	const isLivestreamsTab: boolean = response.tab === 'livestreams';
+
+	return {
+		items: response.items
+			.map((item: ChannelTabApiResponseItem): ChannelTabItemConfig | null =>
+				adaptChannelTabItem(item, thumbnailFallback, avatarFallback, isLivestreamsTab)
+			)
+			.filter((item: ChannelTabItemConfig | null): item is ChannelTabItemConfig => item !== null),
+		nextPage: adaptNextPage(response.nextPage)
 	};
 }
 
@@ -109,6 +242,6 @@ export function adaptChannelVideos(
 		items: response.items.map((v: ChannelVideoApiResponseItem): ChannelVideoConfig =>
 			adaptChannelVideo(v, thumbnailFallback, avatarFallback)
 		),
-		nextPage: response.nextPage?.url || response.nextPage?.body ? response.nextPage : null
+		nextPage: adaptNextPage(response.nextPage)
 	};
 }
