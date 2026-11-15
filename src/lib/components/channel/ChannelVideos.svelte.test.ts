@@ -89,8 +89,25 @@ describe('ChannelVideos', () => {
 		});
 
 		it('separates views and date with a dot when both are present', () => {
-			render(ChannelVideos, { props: { videos: [channelVideosFixture.items[0]] } });
+			render(ChannelVideos, { props: { videos: [fittingIn] } });
 			expect(screen.getByText('·')).toBeInTheDocument();
+		});
+	});
+
+	describe('Tab variants', () => {
+		it('should render a live stream as a card that is not a link', () => {
+			const live: ChannelVideoConfig = { ...fittingIn, id: 'live-now', isLive: true };
+
+			render(ChannelVideos, { props: { videos: [live, cainesRequiem], tab: 'livestreams' } });
+
+			expect(screen.getByText(/can't be played yet/)).toBeTruthy();
+			expect(screen.getAllByRole('link')).toHaveLength(1);
+		});
+
+		it('should name the tab in the empty state', () => {
+			render(ChannelVideos, { props: { videos: [], tab: 'shorts' } });
+
+			expect(screen.getByText('No shorts available')).toBeTruthy();
 		});
 	});
 
