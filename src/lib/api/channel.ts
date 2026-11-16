@@ -180,36 +180,3 @@ export function getChannelVideos(
 ): Promise<ChannelVideosApiResponse> {
 	return getChannelTab(channelId, 'videos', fetchFn) as Promise<ChannelVideosApiResponse>;
 }
-
-/**
- * Fetch the next page of videos uploaded by a channel
- */
-export async function getChannelVideosNextPage(
-	channelId: string,
-	channelName: string,
-	pageUrl: string,
-	pageBody: string,
-	verification: string,
-	fetchFn?: typeof globalThis.fetch
-): Promise<ChannelVideosApiResponse> {
-	const fetcher: {
-		(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
-		(input: string | URL | Request, init?: RequestInit): Promise<Response>;
-	} = fetchFn ?? globalThis.fetch;
-
-	try {
-		const res: Response = await fetcher(
-			`${API_BASE_URL}/channels/tab/page?channelId=${encodeURIComponent(channelId)}&tab=videos&pageUrl=${encodeURIComponent(pageUrl)}&pageBody=${encodeURIComponent(pageBody)}&pageIds=${encodeURIComponent(channelName)}&pageIds=https://www.youtube.com/channel/${encodeURIComponent(channelId)}&pageIds=${encodeURIComponent(verification)}`
-		);
-
-		if (!res.ok) {
-			throw new Error(
-				`Failed to fetch next page of channel videos for ${channelId}: ${res.status} ${res.statusText}`
-			);
-		}
-		return await res.json();
-	} catch (error) {
-		console.error('Error fetching next page of channel videos:', error);
-		throw error;
-	}
-}

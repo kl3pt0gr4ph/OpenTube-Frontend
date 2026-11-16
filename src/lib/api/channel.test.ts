@@ -4,8 +4,7 @@ import {
 	getChannelInfo,
 	getChannelTab,
 	getChannelTabNextPage,
-	getChannelVideos,
-	getChannelVideosNextPage
+	getChannelVideos
 } from '#lib/api/channel.ts';
 import { createSuccessfulFetch, extractQueryParams } from '../../tests/helpers/apiHelpers.ts';
 import channelDetailsApiResponseFixture from '../../tests/fixtures/api/channelDetailsApiResponse.json';
@@ -25,22 +24,6 @@ describeJsonFetcher({
 	endpoint: '/channels/tab',
 	idParam: 'id',
 	fixture: channelVideosApiResponseFixture
-});
-
-describeJsonFetcher({
-	name: 'getChannelVideosNextPage',
-	call: (channelId: string, fetchFn) =>
-		getChannelVideosNextPage(
-			channelId,
-			'GLITCH',
-			'https://www.youtube.com/youtubei/v1/browse?prettyPrint=false',
-			'EqADEgNsdHQamANTQ2lDQVF0TVdVMTJTbGMxY2xsTlJZSUJDMjlsY1ZWSVJYQTB',
-			'VERIFIED',
-			fetchFn
-		),
-	endpoint: '/channels/tab/page',
-	idParam: 'channelId',
-	fixture: channelDetailsApiResponseFixture
 });
 
 describeJsonFetcher({

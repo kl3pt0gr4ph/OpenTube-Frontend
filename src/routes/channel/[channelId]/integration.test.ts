@@ -67,6 +67,18 @@ describe('Channel +page.ts — integration', () => {
 			expect(result.error).toBeUndefined();
 		});
 
+		it('should list the tabs the channel has', async () => {
+			const tab = (name: string) => ({ url: '', id: 'glitch-channel-id', contentFilters: [name] });
+			vi.mocked(getChannelInfo).mockResolvedValue({
+				...infoResponse,
+				tabs: [tab('videos'), tab('shorts'), tab('playlists')]
+			});
+
+			const result = await loadChannel();
+
+			expect(result.tabs).toEqual(['videos', 'shorts', 'playlists']);
+		});
+
 		it('should pass the channelId from params to both API calls exactly once each', async () => {
 			await loadChannel('some-other-channel');
 
