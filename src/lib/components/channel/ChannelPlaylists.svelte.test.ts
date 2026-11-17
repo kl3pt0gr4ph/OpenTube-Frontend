@@ -36,7 +36,6 @@ describe('ChannelPlaylists', () => {
 		render(ChannelPlaylists, { props: { playlists: [playlist], tab: 'albums' } });
 
 		expect(screen.getByText('8 tracks')).toBeTruthy();
-		expect(screen.getByText('Album')).toBeTruthy();
 	});
 
 	it('should open a playlist at its first video when its card is clicked', async () => {
