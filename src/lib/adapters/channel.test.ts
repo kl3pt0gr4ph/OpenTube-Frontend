@@ -1,7 +1,8 @@
 /**
  * Test Suite: channel.ts
  *
- * Tests for formatSubscriberCount, adaptChannelInfo, and adaptChannelVideos.
+ * Tests for formatSubscriberCount, adaptChannelInfo, adaptChannelTabs,
+ * adaptChannelTab, and adaptChannelVideos.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -25,10 +26,28 @@ import channelDetailsResponseFixture from '../../tests/fixtures/api/channelDetai
 import channelVideosResponseFixture from '../../tests/fixtures/api/channelVideosApiResponse.json';
 import channelDetailsFixture from '../../tests/fixtures/adapters/channelDetailsAdaptedResponse.json';
 import channelVideosFixture from '../../tests/fixtures/adapters/channelVideosAdaptedResponse.json';
-import type { ChannelInfoApiResponse, ChannelVideosApiResponse } from '#lib/api/channel.js';
+import type {
+	ChannelInfoApiResponse,
+	ChannelTabChannelApiResponseItem,
+	ChannelVideosApiResponse
+} from '#lib/api/channel.js';
 
 const thumbnailFallback = 'fallback-thumb.jpg';
 const avatarFallback = 'fallback-avatar.jpg';
+
+const buildChannelTabChannelItem = (
+	overrides: Partial<ChannelTabChannelApiResponseItem> = {}
+): ChannelTabChannelApiResponseItem => ({
+	infoType: 'CHANNEL',
+	url: 'https://www.youtube.com/channel/UCfeatured',
+	name: 'Featured Channel',
+	description: null,
+	subscriberCount: 1200,
+	streamCount: -1,
+	verified: true,
+	thumbnails: [],
+	...overrides
+});
 
 describe('formatSubscriberCount', () => {
 	it.each([
@@ -175,6 +194,12 @@ describe('adaptChannelTabs', () => {
 	])('falls back to the videos tab for %s', (_label, tabs) => {
 		expect(adaptChannelTabs(tabs)).toEqual(['videos']);
 	});
+
+	it('skips null tabs and tabs without content filters, and matches case-insensitively', () => {
+		const tabs = [null, { url: '', id: 'UCtest456' }, tab('Shorts')];
+
+		expect(adaptChannelTabs(tabs as never)).toEqual(['shorts']);
+	});
 });
 
 describe('adaptChannelTab', () => {
@@ -183,16 +208,7 @@ describe('adaptChannelTab', () => {
 			items: [
 				buildRelatedItem(),
 				buildChannelPlaylistItem(),
-				{
-					infoType: 'CHANNEL',
-					url: 'https://www.youtube.com/channel/UCfeatured',
-					name: 'Featured Channel',
-					description: null,
-					subscriberCount: 1200,
-					streamCount: -1,
-					verified: true,
-					thumbnails: []
-				},
+				buildChannelTabChannelItem(),
 				{ ...buildRelatedItem(), infoType: 'COMMENT' }
 			]
 		});
@@ -221,10 +237,25 @@ describe('adaptChannelTab', () => {
 		]);
 	});
 
+	it('drops items without an id', () => {
+		const response = buildChannelTabResponse({
+			items: [
+				buildRelatedItem({ url: '' }),
+				buildChannelPlaylistItem({ url: '' }),
+				buildChannelTabChannelItem({ url: '' })
+			]
+		});
+
+		expect(adaptChannelTab(response, thumbnailFallback, avatarFallback).items).toEqual([]);
+	});
+
 	it.each([
+		['empty title', { name: '' }, 'title', 'Untitled'],
 		['unknown count', { streamCount: -1 }, 'streamCount', 0],
+		['missing count', { streamCount: undefined }, 'streamCount', 0],
 		['missing thumbnails', { thumbnails: [] }, 'thumbnail', thumbnailFallback],
-		['missing uploader', { uploaderName: null, uploaderUrl: null }, 'uploaderId', '']
+		['missing uploader', { uploaderName: null, uploaderUrl: null }, 'uploaderId', ''],
+		['missing uploader name', { uploaderName: null }, 'uploaderName', '']
 	])('falls back for a playlist with %s', (_label, override, field, expected) => {
 		const response = buildChannelTabResponse({ items: [buildChannelPlaylistItem(override)] });
 
@@ -234,10 +265,24 @@ describe('adaptChannelTab', () => {
 	});
 
 	it.each([
+		['empty name', { name: '' }, 'name', 'Unknown Channel'],
+		['missing subscriber count', { subscriberCount: undefined }, 'subscriberCount', 0],
+		['hidden subscriber count', { subscriberCount: -1 }, 'subscriberCount', 0],
+		['missing verified flag', { verified: undefined }, 'verified', false]
+	])('falls back for a channel with %s', (_label, override, field, expected) => {
+		const response = buildChannelTabResponse({ items: [buildChannelTabChannelItem(override)] });
+
+		const [channel] = adaptChannelTab(response, thumbnailFallback, avatarFallback).items;
+
+		expect(channel[field as keyof typeof channel]).toBe(expected);
+	});
+
+	it.each([
 		['livestreams', -1, true],
+		['livestreams', undefined, true],
 		['livestreams', 3600, false],
 		['shorts', -1, false]
-	])('on the %s tab a stream with duration %d has isLive %s', (tab, duration, isLive) => {
+	])('on the %s tab a stream with duration %s has isLive %s', (tab, duration, isLive) => {
 		const response = buildChannelTabResponse({ tab, items: [buildRelatedItem({ duration })] });
 
 		const [video] = adaptChannelTab(response, thumbnailFallback, avatarFallback).items;
@@ -263,6 +308,16 @@ describe('adaptChannelTab', () => {
 		const response = buildChannelTabResponse({ nextPage });
 
 		expect(adaptChannelTab(response, thumbnailFallback, avatarFallback).nextPage).toEqual(nextPage);
+	});
+
+	it.each([
+		['missing', undefined, null],
+		['exhausted', { url: '', body: '', ids: [] }, null],
+		['body-only', { url: '', body: 'token', ids: [] }, { url: '', body: 'token', ids: [] }]
+	])('handles a %s continuation page', (_label, nextPage, expected) => {
+		const response = buildChannelTabResponse({ nextPage });
+
+		expect(adaptChannelTab(response, thumbnailFallback, avatarFallback).nextPage).toEqual(expected);
 	});
 });
 
@@ -327,7 +382,10 @@ describe('adaptChannelVideos', () => {
 			['empty upload date', { textualUploadDate: '' }, 'uploadedDate', ''],
 			['negative duration', { duration: -1 }, 'duration', 0],
 			['missing duration', { duration: undefined }, 'duration', 0],
-			['negative viewCount', { viewCount: -50 }, 'viewCount', 0]
+			['negative viewCount', { viewCount: -50 }, 'viewCount', 0],
+			['missing viewCount', { viewCount: undefined }, 'viewCount', 0],
+			['missing short flag', { isShortFormContent: undefined }, 'isShort', false],
+			['short flag set', { isShortFormContent: true }, 'isShort', true]
 		])('%s', (_label, override, field, expected) => {
 			const response = buildChannelVideosResponse({ items: [buildRelatedItem(override)] });
 			const { items } = adaptChannelVideos(response, thumbnailFallback, avatarFallback);
