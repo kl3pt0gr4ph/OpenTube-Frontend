@@ -45,7 +45,7 @@
 
 	let error = $derived(data.error ?? null);
 	let tabs = $derived<ChannelTab[]>(data.tabs?.length ? data.tabs : ['videos']);
-	let activeTab = $state<ChannelTab>('videos');
+	let activeTab = $derived(tabs[0]);
 
 	// The videos tab arrives with the page; every other tab is fetched the first
 	// time it is opened. Being derived from `data`, this resets on a new channel.
@@ -57,10 +57,6 @@
 			loadingMore: false,
 			error: null
 		}
-	});
-
-	$effect(() => {
-		activeTab = tabs[0];
 	});
 
 	$effect(() => {
