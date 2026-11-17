@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/svelte';
+import { render, screen, fireEvent, waitFor } from '@testing-library/svelte';
 import Page from './+page.svelte';
 import channelDetailsFixture from '../../../tests/fixtures/adapters/channelDetailsAdaptedResponse.json';
 import channelVideosFixture from '../../../tests/fixtures/adapters/channelVideosAdaptedResponse.json';
+import { buildChannelPlaylistItem, buildChannelTabResponse } from '../../../tests/fixtures/builder';
 
 vi.mock('#lib/components/channel/ChannelDetails.svelte', async () => ({
 	default: (await import('../../../tests/stubs/ChannelDetailsStub.svelte')).default
@@ -12,13 +13,24 @@ vi.mock('#lib/components/channel/ChannelVideos.svelte', () => ({
 	default: vi.fn(() => null)
 }));
 
+vi.mock('#lib/components/channel/ChannelPlaylists.svelte', () => ({
+	default: vi.fn(() => null)
+}));
+
 vi.mock('#lib/components/ErrorCard.svelte', () => ({
 	default: vi.fn(() => null)
 }));
 
+vi.mock('#lib/api/channel.ts', () => ({
+	getChannelTab: vi.fn(),
+	getChannelTabNextPage: vi.fn()
+}));
+
+import { getChannelTab } from '#lib/api/channel.ts';
 import ChannelVideos from '#lib/components/channel/ChannelVideos.svelte';
+import ChannelPlaylists from '#lib/components/channel/ChannelPlaylists.svelte';
 import ErrorCard from '#lib/components/ErrorCard.svelte';
-import type { ChannelConfig, ChannelVideoPage } from '#lib/adapters/channel.js';
+import type { ChannelConfig, ChannelVideoPage } from '#lib/adapters/channel.ts';
 import type { ChannelPageData } from './+page';
 
 const mockChannel = channelDetailsFixture as ChannelConfig;
@@ -39,6 +51,7 @@ const errorChannel: ChannelConfig = {
 
 const createPageData = (overrides: Partial<ChannelPageData> = {}): ChannelPageData => ({
 	channel: mockChannel,
+	tabs: ['videos', 'playlists'],
 	videos: mockVideos,
 	nextPage: videoPage.nextPage,
 	error: undefined,
@@ -76,10 +89,37 @@ describe('+page.svelte - Channel', () => {
 		);
 	});
 
-	it('should render the playlists snippet placeholder', () => {
+	it('should fetch a tab the first time it is opened and render its items', async () => {
+		vi.mocked(getChannelTab).mockResolvedValue(
+			buildChannelTabResponse({ tab: 'playlists', items: [buildChannelPlaylistItem()] })
+		);
 		render(Page, { props: { data: createPageData() } });
 
-		expect(screen.getByText('Playlists coming soon')).toBeTruthy();
+		expect(getChannelTab).not.toHaveBeenCalled();
+
+		await fireEvent.click(screen.getByRole('button', { name: 'playlists' }));
+
+		await waitFor(() =>
+			expect(vi.mocked(ChannelPlaylists)).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					tab: 'playlists',
+					playlists: [expect.objectContaining({ id: 'PLtest123', title: 'Test Playlist' })]
+				})
+			)
+		);
+		expect(getChannelTab).toHaveBeenCalledWith(mockChannel.id, 'playlists');
+	});
+
+	it('should show the error and a retry button when a tab fails to load', async () => {
+		vi.mocked(getChannelTab).mockRejectedValue(new Error('Tab unavailable'));
+		render(Page, { props: { data: createPageData() } });
+
+		await fireEvent.click(screen.getByRole('button', { name: 'playlists' }));
+
+		expect(await screen.findByText('Tab unavailable')).toBeTruthy();
+		expect(screen.getByRole('button', { name: 'Try again' })).toBeTruthy();
+		expect(vi.mocked(ChannelPlaylists)).not.toHaveBeenCalled();
 	});
 
 	it('should render the full-page error composition when error is set and channel name is empty', () => {
@@ -107,8 +147,6 @@ describe('+page.svelte - Channel', () => {
 		const data = createPageData({ channel: errorChannel, error: 'Channel not found' });
 		render(Page, { props: { data } });
 
-		// Pull onRetry off the props the page passed to ErrorCard and
-		// invoke it, exercising the () => window.location.reload() closure
 		const errorCardProps = vi.mocked(ErrorCard).mock.calls[0][1] as { onRetry: () => void };
 		errorCardProps.onRetry();
 
@@ -116,8 +154,6 @@ describe('+page.svelte - Channel', () => {
 	});
 
 	it('should fall through to the normal branch when error is set but channel name is populated', () => {
-		// Error && !channel.name is false when channel.name is truthy,
-		// so a partial error (e.g. videos unavailable) still renders the channel
 		const data = createPageData({ error: 'Videos unavailable' });
 
 		const { container } = render(Page, { props: { data } });

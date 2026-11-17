@@ -1,6 +1,7 @@
 import { getChannelInfo, getChannelVideos } from '#lib/api/channel.js';
 import {
 	adaptChannelInfo,
+	adaptChannelTabs,
 	adaptChannelVideos,
 	type ChannelConfig,
 	type ChannelVideoPage
@@ -28,6 +29,7 @@ function createErrorPageData(error: unknown): ChannelPageData {
 			videoCount: 0,
 			verified: false
 		},
+		tabs: [],
 		videos: [],
 		nextPage: null,
 		error: errorMessage
@@ -55,7 +57,12 @@ export async function loadChannelData(
 
 		const channel: ChannelConfig = adaptChannelInfo(info, videoPage.items.length);
 
-		return { channel, videos: videoPage.items, nextPage: videoPage.nextPage };
+		return {
+			channel,
+			tabs: adaptChannelTabs(info.tabs),
+			videos: videoPage.items,
+			nextPage: videoPage.nextPage
+		};
 	} catch (error) {
 		console.error('Error loading channel data:', error);
 		return createErrorPageData(error);

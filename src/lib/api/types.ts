@@ -20,3 +20,7 @@ export interface Image {
 	width: number;
 	estimatedResolutionLevel?: string;
 }
+
+export const CHANNEL_TABS = ['videos', 'shorts', 'livestreams', 'playlists', 'albums'] as const;
+
+export type ChannelTabName = (typeof CHANNEL_TABS)[number];

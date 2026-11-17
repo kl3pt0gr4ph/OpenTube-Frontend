@@ -193,6 +193,15 @@ describe('ChannelDetails', () => {
 			expect(screen.getByRole('tab', { name: 'Playlists' })).toBeTruthy();
 		});
 
+		it('should render only the tabs it is given, in order', () => {
+			render(ChannelDetails, {
+				props: { channel: glitchChannel, tabs: ['videos', 'shorts', 'livestreams'] }
+			});
+
+			const labels = screen.getAllByRole('tab').map((tab) => tab.textContent?.trim());
+			expect(labels).toEqual(['Videos', 'Shorts', 'Livestreams']);
+		});
+
 		it('should mark Videos as selected by default', () => {
 			render(ChannelDetails, { props: { channel: glitchChannel } });
 

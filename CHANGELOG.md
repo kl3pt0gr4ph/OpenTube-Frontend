@@ -6,6 +6,19 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- The channel page's Playlists tab lists the channel's playlists, with "Load more" pagination, replacing the "coming soon" placeholder. ([120])
+- Shorts, Livestreams and Albums tabs on the channel page, each with "Load more" pagination. ([#120])
+
+### Changed
+
+- The channel page shows only the tabs the channel has, instead of always showing Videos and Playlists. ([#120])
+- Tabs other than Videos are fetched the first time they are opened. ([#120])
+- Live and upcoming streams on the Livestreams tab are listed but can't be opened, because live playback needs HLS, which isn't supported yet. Finished streams play as normal. ([#120])
+
+[#120]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/XXX
+
 ## [0.6.3] - 2026-11-13
 
 ### Fixed

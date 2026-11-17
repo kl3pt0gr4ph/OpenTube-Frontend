@@ -1,15 +1,20 @@
 /**
- * Shared test-data builders — one per API response type.
+ * Shared test-data builders - one per API response type.
  * Defaults are modelled on the real fixtures in src/tests/fixtures/api/.
  */
 
-import type { Avatar, Details, Image } from '#lib/types.js';
-import type { SearchApiResponse } from '#lib/api/search.js';
-import type { RelatedItemApiResponse } from '#lib/api/related.js';
-import type { CommentApiResponse, RelatedCommentApiResponseItem } from '#lib/api/comments.js';
-import type { ChannelInfoApiResponse, ChannelVideosApiResponse } from '#lib/api/channel.js';
-import type { PlaylistApiResponse } from '#lib/api/playlist.js';
-import type { KioskApiResponseItem } from '#lib/api/kiosk.js';
+import type { Avatar, Details, Image } from '#lib/types.ts';
+import type { SearchApiResponse } from '#lib/api/search.ts';
+import type { RelatedItemApiResponse } from '#lib/api/related.ts';
+import type { CommentApiResponse, RelatedCommentApiResponseItem } from '#lib/api/comments.ts';
+import type {
+	ChannelInfoApiResponse,
+	ChannelPlaylistApiResponseItem,
+	ChannelTabApiResponse,
+	ChannelVideosApiResponse
+} from '#lib/api/channel.ts';
+import type { PlaylistApiResponse } from '#lib/api/playlist.ts';
+import type { KioskApiResponseItem } from '#lib/api/kiosk.ts';
 
 // ---------------------------------------------------------------------------
 // Media primitives (exported — handy for mediaUtils/thumbnail tests too)
@@ -130,8 +135,10 @@ export const buildChannelDetailsResponse = (
 	...overrides
 });
 
+type ChannelTabOverrides = Omit<Partial<ChannelTabApiResponse>, 'items'> & { items?: unknown };
+
 export const buildChannelVideosResponse = (
-	overrides: Partial<ChannelVideosApiResponse> = {}
+	overrides: ChannelTabOverrides = {}
 ): ChannelVideosApiResponse =>
 	({
 		tab: 'videos',
@@ -139,6 +146,32 @@ export const buildChannelVideosResponse = (
 		items: [buildRelatedItem()],
 		...overrides
 	}) as ChannelVideosApiResponse;
+
+export const buildChannelPlaylistItem = (
+	overrides: Partial<ChannelPlaylistApiResponseItem> = {}
+): ChannelPlaylistApiResponseItem => ({
+	infoType: 'PLAYLIST',
+	url: 'https://www.youtube.com/playlist?list=PLtest123',
+	name: 'Test Playlist',
+	uploaderName: 'Test Channel',
+	uploaderUrl: 'https://www.youtube.com/channel/UCtest456',
+	uploaderVerified: true,
+	streamCount: 8,
+	playlistType: 'NORMAL',
+	thumbnails: [buildThumbnail({ url: 'https://example.com/playlist.jpg' })],
+	...overrides
+});
+
+export const buildChannelTabResponse = (
+	overrides: ChannelTabOverrides = {}
+): ChannelTabApiResponse =>
+	({
+		tab: 'videos',
+		channelId: 'UCtest456',
+		items: [buildRelatedItem()],
+		nextPage: null,
+		...overrides
+	}) as ChannelTabApiResponse;
 
 // ---------------------------------------------------------------------------
 // Comments

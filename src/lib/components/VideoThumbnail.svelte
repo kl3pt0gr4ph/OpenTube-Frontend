@@ -5,12 +5,13 @@
 		src: string;
 		alt?: string;
 		duration?: number;
+		portrait?: boolean;
 	}
 
-	let { src, alt = '', duration = 0 }: Props = $props();
+	let { src, alt = '', duration = 0, portrait = false }: Props = $props();
 </script>
 
-<div class="relative aspect-video w-full overflow-hidden rounded-lg">
+<div class="relative w-full overflow-hidden rounded-lg {portrait ? 'aspect-9/16' : 'aspect-video'}">
 	<img
 		{src}
 		{alt}

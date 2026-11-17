@@ -1,28 +1,34 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
-	import videoCameraIcon from '#lib/assets/icons/videoCamera.svg?raw';
-	import playlistIcon from '#lib/assets/icons/playlist.svg?raw';
+	import ChannelEmptyState from '#lib/components/channel/ChannelEmptyState.svelte';
 
 	import type { ChannelConfig } from '#lib/adapters/channel.js';
+	import type { ChannelTabName } from '#lib/api/types.js';
 
-	export type ChannelTab = 'home' | 'videos' | 'playlists';
+	export type ChannelTab = ChannelTabName;
+
+	const TAB_LABELS: Record<ChannelTab, string> = {
+		videos: 'Videos',
+		shorts: 'Shorts',
+		livestreams: 'Livestreams',
+		playlists: 'Playlists',
+		albums: 'Albums'
+	};
 
 	let {
 		channel,
+		tabs = ['videos', 'playlists'],
 		activeTab = $bindable<ChannelTab>('videos'),
-		videos,
-		playlists
+		tabContent
 	}: {
 		channel: ChannelConfig;
+		/** Tabs to show, in order. Pass only the tabs the channel has. */
+		tabs?: ChannelTab[];
 		activeTab?: ChannelTab;
-		videos?: import('svelte').Snippet;
-		playlists?: import('svelte').Snippet;
+		/** Renders the body of the active tab */
+		tabContent?: Snippet<[ChannelTab]>;
 	} = $props();
-
-	const tabs: { id: ChannelTab; label: string }[] = [
-		{ id: 'videos', label: 'Videos' },
-		{ id: 'playlists', label: 'Playlists' }
-	];
 
 	let descriptionExpanded = $state(false);
 	const MAX_DESC_LENGTH = 180;
@@ -108,17 +114,17 @@
 
 	<!-- Tab bar -->
 	<div class="border-default border-b px-6">
-		<div class="flex" role="tablist" aria-label="Channel sections">
-			{#each tabs as tab (tab.id)}
+		<div class="flex overflow-x-auto" role="tablist" aria-label="Channel sections">
+			{#each tabs as tab (tab)}
 				<button
 					role="tab"
-					aria-selected={activeTab === tab.id}
-					onclick={() => (activeTab = tab.id)}
-					class="relative cursor-pointer px-4 py-3 text-sm font-medium transition-colors
-						{activeTab === tab.id ? 'text-primary' : 'text-secondary hover:text-primary'}"
+					aria-selected={activeTab === tab}
+					onclick={() => (activeTab = tab)}
+					class="relative shrink-0 cursor-pointer px-4 py-3 text-sm font-medium transition-colors
+						{activeTab === tab ? 'text-primary' : 'text-secondary hover:text-primary'}"
 				>
-					{tab.label}
-					{#if activeTab === tab.id}
+					{TAB_LABELS[tab]}
+					{#if activeTab === tab}
 						<span class="bg-primary absolute right-0 bottom-0 left-0 h-0.5 rounded-t-sm"></span>
 					{/if}
 				</button>
@@ -128,30 +134,13 @@
 
 	<!-- Tab content -->
 	<div class="mt-6">
-		{#if activeTab === 'videos'}
-			{#if videos}
-				{@render videos()}
-			{:else}
-				<div class="flex flex-col items-center justify-center px-6 py-12 text-center">
-					<span class="text-muted mb-4 inline-block h-10 w-10">
-						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-						{@html videoCameraIcon}
-					</span>
-					<p class="text-secondary text-sm">No videos available</p>
-				</div>
-			{/if}
-		{:else if activeTab === 'playlists'}
-			{#if playlists}
-				{@render playlists()}
-			{:else}
-				<div class="flex flex-col items-center justify-center px-6 py-12 text-center">
-					<span class="text-muted mb-4 inline-block h-10 w-10">
-						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-						{@html playlistIcon}
-					</span>
-					<p class="text-secondary text-sm">No playlists available</p>
-				</div>
-			{/if}
+		{#if tabContent}
+			{@render tabContent(activeTab)}
+		{:else}
+			<ChannelEmptyState
+				icon={activeTab === 'playlists' || activeTab === 'albums' ? 'playlist' : 'video'}
+				message={`No ${TAB_LABELS[activeTab].toLowerCase()} available`}
+			/>
 		{/if}
 	</div>
 </div>
