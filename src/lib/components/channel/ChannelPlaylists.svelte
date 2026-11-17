@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ChannelEmptyState from '#lib/components/channel/ChannelEmptyState.svelte';
-	import RelatedPlaylistCard from '#lib/components/video/related/RelatedPlaylistCard.svelte';
-	import type { ChannelPlaylistConfig } from '#lib/adapters/channel.ts';
+	import ChannelPlaylistCard from '#lib/components/channel/ChannelPlaylistCard.svelte';
+	import type { ChannelPlaylistConfig } from '#lib/adapters/channel.js';
 
 	let {
 		playlists,
@@ -13,10 +13,10 @@
 	{#if playlists.length === 0}
 		<ChannelEmptyState icon="playlist" message={`No ${tab} available`} />
 	{:else}
-		<!-- px-4 plus the card's own mx-2 lines the grid up with the video grid's px-6 -->
-		<div class="grid grid-cols-1 gap-4 px-4 pb-8 md:grid-cols-2 xl:grid-cols-3">
+		<!-- Same grid as ChannelVideos, so the tabs line up -->
+		<div class="grid grid-cols-1 gap-4 px-6 pb-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 			{#each playlists as playlist (playlist.id)}
-				<RelatedPlaylistCard {playlist} />
+				<ChannelPlaylistCard {playlist} album={tab === 'albums'} />
 			{/each}
 		</div>
 	{/if}

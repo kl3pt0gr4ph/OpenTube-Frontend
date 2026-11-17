@@ -10,8 +10,8 @@ import type {
 	ChannelVideoApiResponseItem,
 	ChannelVideosApiResponse
 } from '#lib/api/channel.js';
-import { CHANNEL_TABS, type ChannelTabName, type NextPage } from '#lib/api/types.js';
-import type { RelatedPlaylistConfig } from '#lib/adapters/related.js';
+import { CHANNEL_TABS, type ChannelTabName, type NextPage } from '#lib/api/types.ts';
+import type { RelatedPlaylistConfig } from '#lib/adapters/related.ts';
 
 /**
  * Format a raw subscriber count into a compact display string.
