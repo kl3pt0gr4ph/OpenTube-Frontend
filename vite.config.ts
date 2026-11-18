@@ -32,18 +32,16 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'json', 'html', 'lcov'],
+			include: ['src/**/*.{ts,js,svelte}'],
 			exclude: [
-				'node_modules/',
-				'src/tests/',
-				'src/tests/helpers/',
-				'src/tests/stubs/',
-				'src/tests/fixtures/',
+				'src/tests/**',
+				'src/**/*.{test,spec}.{ts,js}',
+				'src/**/{types,index,shaka}.{ts,js}',
 				'**/*.d.ts',
 				'**/*.config.*',
-				'**/mockData/',
-				'dist/',
-				'.svelte-kit/',
-				'src/lib/assets/**'
+				'**/mockData/**',
+				'src/lib/assets/**',
+				'src/lib/**'
 			],
 			thresholds: {
 				lines: 85,
