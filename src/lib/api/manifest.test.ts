@@ -10,7 +10,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getManifest, getManifestUrl } from './manifest';
 import {
 	createSuccessfulFetch,
-	createFailedFetch,
+	createApiErrorFetch,
 	createNetworkErrorFetch
 } from '../../tests/helpers/apiHelpers';
 import manifestXmlFixture from '../../tests/fixtures/api/manifestXmlFixture.xml?raw';
@@ -97,12 +97,10 @@ describe('getManifest', () => {
 			expect(result).toEqual({ url: DIRECT_URL, duration: 0, isMuxed: true });
 		});
 
-		it('throws when the fallback body contains no URL', async () => {
-			vi.spyOn(console, 'error').mockImplementation(() => {});
-
+		it('rejects with INVALID_RESPONSE when the fallback body contains no URL', async () => {
 			await expect(
 				getManifest('video-id', createMuxedFetch('\r\n# nothing here\r\n', URI_LIST))
-			).rejects.toThrow(/video-id[\s\S]*no URL/);
+			).rejects.toMatchObject({ errorCode: 'INVALID_RESPONSE' });
 		});
 	});
 
@@ -127,23 +125,18 @@ describe('getManifest', () => {
 	});
 
 	it.each([
-		[404, 'Not Found'],
-		[503, 'Service Unavailable']
-	])('throws with id, status and statusText on HTTP %i', async (status, statusText) => {
-		vi.spyOn(console, 'error').mockImplementation(() => {});
-		const mockFetch = createFailedFetch(status, statusText);
-
-		await expect(getManifest('bad-id', mockFetch)).rejects.toThrow(
-			new RegExp(`bad-id[\\s\\S]*${status}[\\s\\S]*${statusText}`)
-		);
+		[403, 'AGE_RESTRICTED'],
+		[503, 'NO_STREAMS_AVAILABLE']
+	])('rejects with the backend errorCode on HTTP %i', async (status, errorCode) => {
+		await expect(
+			getManifest('bad-id', createApiErrorFetch(status, errorCode))
+		).rejects.toMatchObject({ name: 'ApiError', status, errorCode });
 	});
 
-	it('propagates network errors', async () => {
-		vi.spyOn(console, 'error').mockImplementation(() => {});
-
+	it('rejects with API_UNREACHABLE when no response arrives', async () => {
 		await expect(
 			getManifest('video-id', createNetworkErrorFetch('Failed to fetch'))
-		).rejects.toThrow('Failed to fetch');
+		).rejects.toMatchObject({ name: 'ApiError', errorCode: 'API_UNREACHABLE' });
 	});
 });
 

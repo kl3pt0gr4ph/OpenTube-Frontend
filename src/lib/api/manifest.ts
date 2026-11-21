@@ -1,6 +1,8 @@
 import { PUBLIC_API_URL } from '$app/env/public';
 import { DOMParser, type Document, type Element } from '@xmldom/xmldom';
-import { parseIsoDuration } from '#lib/utils/formatters.js';
+import { parseIsoDuration } from '#lib/utils/formatters.ts';
+import { apiFetch } from '#lib/api/client.ts';
+import { invalidResponse } from '#lib/api/errors.ts';
 
 const API_BASE_URL: string = PUBLIC_API_URL;
 
@@ -40,65 +42,47 @@ export async function getManifest(
 	id: string,
 	fetchFn?: typeof globalThis.fetch
 ): Promise<ManifestApiResponse> {
-	const fetcher: {
-		(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
-		(input: string | URL | Request, init?: RequestInit): Promise<Response>;
-	} = fetchFn ?? globalThis.fetch;
+	const res: Response = await apiFetch(
+		`${API_BASE_URL}/streams/dash?id=${encodeURIComponent(id)}`,
+		fetchFn
+	);
 
-	try {
-		const res: Response = await fetcher(
-			`${API_BASE_URL}/streams/dash?id=${encodeURIComponent(id)}`
-		);
-
-		if (!res.ok) {
-			throw new Error(`Failed to fetch DASH manifest for ${id}: ${res.status} ${res.statusText}`);
+	// Muxed progressive fallback
+	if (isMuxedFallback(res)) {
+		const directUrl: string = firstUri(await res.text());
+		if (!directUrl) {
+			throw invalidResponse(res.status, `Muxed fallback for ${id} returned no URL`);
 		}
-
-		// Muxed progressive fallback
-		if (isMuxedFallback(res)) {
-			const directUrl: string = firstUri(await res.text());
-			if (!directUrl) {
-				throw new Error(`Muxed fallback for ${id} returned no URL`);
-			}
-			console.log(`Muxed progressive fallback for ${id}`);
-			return {
-				url: directUrl,
-				duration: 0,
-				isMuxed: true
-			};
-		}
-
-		const manifestXml: string = await res.text();
-
-		const parser = new DOMParser();
-		const xmlDoc: Document = parser.parseFromString(manifestXml, 'text/xml');
-		const mpdElement: Element | undefined = xmlDoc.getElementsByTagNameNS(DASH_NAMESPACE, 'MPD')[0];
-
-		const durationStr: string | null = mpdElement?.getAttribute('mediaPresentationDuration');
-		const duration: number = parseIsoDuration(durationStr);
-
-		const adaptationSet: Element = xmlDoc.getElementsByTagNameNS(
-			DASH_NAMESPACE,
-			'AdaptationSet'
-		)[0];
-		const videoId: string | null = adaptationSet?.getAttribute('id');
-
-		const blob = new Blob([manifestXml], { type: 'application/dash+xml' });
-		const url: string = URL.createObjectURL(blob);
-
-		console.log(
-			`Manifest loaded for ${id}: duration=${duration}s, videoId=${videoId || 'not set'}`
-		);
-
+		console.log(`Muxed progressive fallback for ${id}`);
 		return {
-			url,
-			duration,
-			videoId: videoId || undefined
+			url: directUrl,
+			duration: 0,
+			isMuxed: true
 		};
-	} catch (error) {
-		console.error('Error fetching DASH manifest:', error);
-		throw error;
 	}
+
+	const manifestXml: string = await res.text();
+
+	const parser = new DOMParser();
+	const xmlDoc: Document = parser.parseFromString(manifestXml, 'text/xml');
+	const mpdElement: Element | undefined = xmlDoc.getElementsByTagNameNS(DASH_NAMESPACE, 'MPD')[0];
+
+	const durationStr: string | null = mpdElement?.getAttribute('mediaPresentationDuration');
+	const duration: number = parseIsoDuration(durationStr);
+
+	const adaptationSet: Element = xmlDoc.getElementsByTagNameNS(DASH_NAMESPACE, 'AdaptationSet')[0];
+	const videoId: string | null = adaptationSet?.getAttribute('id');
+
+	const blob = new Blob([manifestXml], { type: 'application/dash+xml' });
+	const url: string = URL.createObjectURL(blob);
+
+	console.log(`Manifest loaded for ${id}: duration=${duration}s, videoId=${videoId || 'not set'}`);
+
+	return {
+		url,
+		duration,
+		videoId: videoId || undefined
+	};
 }
 
 /**

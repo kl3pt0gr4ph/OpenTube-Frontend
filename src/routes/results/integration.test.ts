@@ -95,28 +95,21 @@ describe('results load function integration', () => {
 			expect(search.results).toEqual({ items: [], nextPage: null, hasNextPage: false });
 			expect(search.query).toBe('error test');
 			expect(search.sortFilter).toBe('asc');
-			expect(search.error).toContain('Could not load search results');
+			expect(search.error).toBe('The API responded 404 Not Found.');
 		});
 
-		it('passes network error messages through', async () => {
-			const fetch = vi.fn().mockRejectedValue(new Error('Failed to fetch'));
+		it.each([
+			['an Error', new Error('Failed to fetch')],
+			['a non-Error value', 'Something went wrong']
+		])('reports the API as unreachable when fetch rejects with %s', async (_label, rejection) => {
+			const fetch = vi.fn().mockRejectedValue(rejection);
 			vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			const search = await runLoad(fetch, '?query=network%20error');
 
 			expect(search.results).toEqual({ items: [], nextPage: null, hasNextPage: false });
 			expect(search.query).toBe('network error');
-			expect(search.error).toBe('Failed to fetch');
-		});
-
-		it('falls back to the default message for non-Error rejections', async () => {
-			const fetch = vi.fn().mockRejectedValue('Something went wrong');
-			vi.spyOn(console, 'error').mockImplementation(() => {});
-
-			const search = await runLoad(fetch, '?query=test');
-
-			expect(search.results).toEqual({ items: [], nextPage: null, hasNextPage: false });
-			expect(search.error).toBe('Failed to load search results');
+			expect(search.error).toBe("The API couldn't be reached.");
 		});
 	});
 });

@@ -234,31 +234,23 @@ describe('video/[id] load function integration', () => {
 			const result = await runLoad(fetch as never, '', 'nonexistent-video');
 
 			expect(result.metadata.title).toBe('Error Loading Video');
-			expect(result.error).toContain('Failed to fetch');
+			expect(result.error).toBe('The API responded 404 Not Found.');
 			expect(result.playerConfig.manifestUrl).toBe('');
 			expect(result.relatedItems).toEqual([]);
 		});
 
-		it('surfaces network error messages', async () => {
-			const fetch = vi.fn().mockRejectedValue(new Error('Network connection failed'));
-			vi.spyOn(console, 'error').mockImplementation(() => {});
-
-			const result = await runLoad(fetch as never);
-
-			expect(result.metadata.title).toBe('Error Loading Video');
-			expect(result.error).toBe('Network connection failed');
-		});
-
 		it.each([
+			['an Error', new Error('Network connection failed')],
 			['a non-Error value', 'String error'],
 			['undefined', undefined]
-		])('falls back to the default message when rejected with %s', async (_label, rejection) => {
+		])('reports the API as unreachable when fetch rejects with %s', async (_label, rejection) => {
 			const fetch = vi.fn().mockRejectedValue(rejection);
 			vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			const result = await runLoad(fetch as never);
 
-			expect(result.error).toBe('Unknown error loading video');
+			expect(result.metadata.title).toBe('Error Loading Video');
+			expect(result.error).toBe("The API couldn't be reached.");
 		});
 	});
 });

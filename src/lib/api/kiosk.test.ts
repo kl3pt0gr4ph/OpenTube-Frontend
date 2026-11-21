@@ -18,8 +18,7 @@ describeJsonFetcher({
 });
 
 describe('getKioskInfo', () => {
-	it('propagates a malformed JSON body', async () => {
-		vi.spyOn(console, 'error').mockImplementation(() => {});
+	it('rejects with INVALID_RESPONSE for a malformed JSON body', async () => {
 		const fetchFn = vi.fn().mockResolvedValue({
 			ok: true,
 			status: 200,
@@ -29,8 +28,8 @@ describe('getKioskInfo', () => {
 			}
 		});
 
-		await expect(getKioskInfo('trending_podcasts_episodes', fetchFn as never)).rejects.toThrow(
-			SyntaxError
-		);
+		await expect(
+			getKioskInfo('trending_podcasts_episodes', fetchFn as never)
+		).rejects.toMatchObject({ name: 'ApiError', status: 200, errorCode: 'INVALID_RESPONSE' });
 	});
 });
