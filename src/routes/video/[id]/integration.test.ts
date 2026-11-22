@@ -7,7 +7,8 @@ import manifestXmlFixture from '../../../tests/fixtures/api/manifestXmlFixture.x
 import relatedVideosFixture from '../../../tests/fixtures/api/relatedVideosResponse.json';
 import playlistResponseFixture from '../../../tests/fixtures/api/playlistResponse.json';
 import commentsResponseFixture from '../../../tests/fixtures/api/commentsResponse.json';
-import type { RelatedVideoConfig } from '#lib/adapters/related.js';
+import type { RelatedVideoConfig } from '#lib/adapters/related.ts';
+import { GENERIC_ERROR } from '#lib/adapters/error.ts';
 
 const createMockManifestXml = (duration: string = 'PT2M56S'): string =>
 	manifestXmlFixture
@@ -26,6 +27,12 @@ const createManifestResponse = (
 });
 
 const failedResponse = { ok: false, status: 500, statusText: 'Internal Server Error' };
+
+/** An error response the way NewPipeExtractorAPI sends it */
+const apiErrorResponse = (status: number, errorCode: string): Response =>
+	new Response(JSON.stringify({ status, errorCode, message: 'Message from the API.' }), {
+		status
+	});
 
 // URL-routed fetch: robust to the loader's call order (Promise.all), and
 // per-test overrides replace exactly one endpoint's behaviour.
@@ -227,14 +234,22 @@ describe('video/[id] load function integration', () => {
 	});
 
 	describe('error handling', () => {
-		it('returns error page data on 404', async () => {
-			const fetch = vi.fn().mockResolvedValue({ ok: false, status: 404, statusText: 'Not Found' });
+		it.each([
+			[
+				'a private video',
+				403,
+				'CONTENT_PRIVATE',
+				{ variant: 'info', title: 'Private video', retryable: false }
+			],
+			['an errorCode the frontend has never heard of', 500, 'BRAND_NEW_CODE', GENERIC_ERROR]
+		])('returns error page data for %s', async (_label, status, errorCode, card) => {
+			const fetch = createRouteFetch({ details: () => apiErrorResponse(status, errorCode) });
 			vi.spyOn(console, 'error').mockImplementation(() => {});
 
-			const result = await runLoad(fetch as never, '', 'nonexistent-video');
+			const result = await runLoad(fetch);
 
 			expect(result.metadata.title).toBe('Error Loading Video');
-			expect(result.error).toBe('The API responded 404 Not Found.');
+			expect(result.error).toMatchObject({ errorCode, ...card });
 			expect(result.playerConfig.manifestUrl).toBe('');
 			expect(result.relatedItems).toEqual([]);
 		});
@@ -250,7 +265,11 @@ describe('video/[id] load function integration', () => {
 			const result = await runLoad(fetch as never);
 
 			expect(result.metadata.title).toBe('Error Loading Video');
-			expect(result.error).toBe("The API couldn't be reached.");
+			expect(result.error).toMatchObject({
+				errorCode: 'API_UNREACHABLE',
+				title: "Can't reach the server",
+				retryable: true
+			});
 		});
 	});
 });

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-
 	import { onMount } from 'svelte';
 	import VideoPlayer from '#lib/components/video/VideoPlayer.svelte';
 	import VideoDetail from '#lib/components/video/VideoDetail.svelte';
@@ -45,7 +44,6 @@
 	let videoId = $derived(data.videoId);
 
 	// Computed states
-	let hasError = $derived(!!error);
 	let hasValidManifest = $derived(!!playerConfig.manifestUrl);
 
 	let isPlaylist = $derived(!!playlistId);
@@ -64,15 +62,15 @@
 </script>
 
 <div class="bg-primary w-full">
-	{#if hasError || !hasValidManifest}
+	{#if error || !hasValidManifest}
 		<!-- Full-width centered error states -->
 		<div class="flex min-h-screen items-center justify-center px-4">
-			{#if hasError}
+			{#if error}
 				<ErrorCard
-					variant="error"
-					title="Failed to Load Video"
-					message={error}
-					showRetry={true}
+					variant={error.variant}
+					title={error.title}
+					message={error.message}
+					showRetry={error.retryable}
 					onRetry={() => window.location.reload()}
 				/>
 			{:else}

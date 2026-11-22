@@ -1,25 +1,26 @@
 import type { PageLoad } from './$types';
-import { getVideoDetails } from '#lib/api/details.js';
-import { getRelatedStreams } from '#lib/api/related.js';
-import { adaptPlayerConfig, type VideoPlayerConfig } from '#lib/adapters/player.js';
-import { adaptVideoMetadata, type VideoMetadata } from '#lib/adapters/metadata.js';
+import { getVideoDetails } from '#lib/api/details.ts';
+import { getRelatedStreams } from '#lib/api/related.ts';
+import { adaptPlayerConfig, type VideoPlayerConfig } from '#lib/adapters/player.ts';
+import { adaptVideoMetadata, type VideoMetadata } from '#lib/adapters/metadata.ts';
 import {
 	adaptRelatedItems,
 	type RelatedItemConfig,
 	type RelatedVideoConfig
-} from '#lib/adapters/related.js';
+} from '#lib/adapters/related.ts';
 import {
 	adaptPlaylistInfo,
 	adaptPlaylistVideos,
 	type PlaylistInfoConfig
-} from '#lib/adapters/playlist.js';
+} from '#lib/adapters/playlist.ts';
 import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
-import { getManifest } from '#lib/api/manifest.js';
-import { getVideoThumbnails } from '#lib/api/thumbnails.js';
-import { getPlaylist } from '#lib/api/playlist.js';
-import { getVideoComments } from '#lib/api/comments.js';
-import { adaptCommentResponse, type CommentConfig } from '#lib/adapters/comments.js';
+import { getManifest } from '#lib/api/manifest.ts';
+import { getVideoThumbnails } from '#lib/api/thumbnails.ts';
+import { getPlaylist } from '#lib/api/playlist.ts';
+import { getVideoComments } from '#lib/api/comments.ts';
+import { adaptCommentResponse, type CommentConfig } from '#lib/adapters/comments.ts';
+import { adaptError, type ErrorConfig } from '#lib/adapters/error.ts';
 
 interface ErrorPageData {
 	videoId: string;
@@ -36,16 +37,13 @@ interface ErrorPageData {
 		subscriberCount: number;
 	};
 	relatedItems: RelatedItemConfig[];
-	error: string;
+	error?: ErrorConfig;
 }
 
 /**
  * Creates error page data with default values
  */
 function createErrorPageData(error: unknown, videoId: string): ErrorPageData {
-	const errorMessage: string =
-		error instanceof Error ? error.message : 'Unknown error loading video';
-
 	return <ErrorPageData>{
 		videoId,
 		playerConfig: {
@@ -65,7 +63,7 @@ function createErrorPageData(error: unknown, videoId: string): ErrorPageData {
 			subscriberCount: 0
 		},
 		relatedItems: [],
-		error: errorMessage
+		error: adaptError(error, 'video')
 	};
 }
 
@@ -79,7 +77,7 @@ export interface VideoPageData {
 	playlistVideos?: RelatedVideoConfig[] | null;
 	playlistInfo?: PlaylistInfoConfig | null;
 	videoId?: string | null;
-	error?: string;
+	error?: ErrorConfig;
 }
 
 /**
