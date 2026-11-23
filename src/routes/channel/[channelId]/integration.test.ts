@@ -7,7 +7,7 @@ import thumbnailFallback from '#lib/assets/placeholders/thumbnailFallback.svg';
 
 // Mock only the HTTP boundary — real adapters run so the full pipeline
 // (API response → adapter → page data) is exercised end-to-end.
-vi.mock('#lib/api/channel.js', () => ({
+vi.mock('#lib/api/channel.ts', () => ({
 	getChannelInfo: vi.fn(),
 	getChannelVideos: vi.fn()
 }));
@@ -22,7 +22,7 @@ vi.mock('#lib/assets/placeholder/logofallback.svg', () => ({
 }));
 
 // Mock extractIdFromUrl so URL parsing doesn't pull in unrelated deps
-vi.mock('#lib/utils/streamSelection.js', () => ({
+vi.mock('#lib/utils/streamSelection.ts', () => ({
 	extractIdFromUrl: vi.fn((url: string) => {
 		const match = url.match(/[?&]v=([^&]+)/);
 		return match ? match[1] : (url.split('/').at(-1) ?? '');
@@ -34,9 +34,11 @@ import {
 	type ChannelVideosApiResponse,
 	getChannelInfo,
 	getChannelVideos
-} from '#lib/api/channel.js';
-import { loadChannelData } from '#lib/loaders/channel.js';
-import type { ChannelConfig, ChannelVideoPage } from '#lib/adapters/channel.js';
+} from '#lib/api/channel.ts';
+import { loadChannelData } from '#lib/loaders/channel.ts';
+import { ApiError } from '#lib/api/errors.ts';
+import { GENERIC_ERROR } from '#lib/adapters/error.ts';
+import type { ChannelConfig, ChannelVideoPage } from '#lib/adapters/channel.ts';
 
 const infoResponse = channelDetailsResponseFixture as unknown as ChannelInfoApiResponse;
 const videosResponse = channelVideosResponseFixture as unknown as ChannelVideosApiResponse;
@@ -119,11 +121,17 @@ describe('Channel +page.ts — integration', () => {
 
 	describe('Fatal error handling', () => {
 		it('should return error page data with safe defaults when the channel fetch rejects', async () => {
-			vi.mocked(getChannelInfo).mockRejectedValue(new Error('Channel not found'));
+			vi.mocked(getChannelInfo).mockRejectedValue(
+				new ApiError({ status: 410, errorCode: 'ACCOUNT_TERMINATED', message: 'Gone.' })
+			);
 
 			const result = await loadChannel();
 
-			expect(result.error).toBe('Channel not found');
+			expect(result.error).toMatchObject({
+				errorCode: 'ACCOUNT_TERMINATED',
+				title: 'Account terminated',
+				retryable: false
+			});
 			expect(result.channel).toEqual({
 				id: '',
 				name: 'Error Loading Channel',
@@ -139,12 +147,12 @@ describe('Channel +page.ts — integration', () => {
 			expect(result.nextPage).toBeNull();
 		});
 
-		it('should use "Unknown error loading channel" for non-Error rejections', async () => {
+		it('should give the generic error for anything that is not an ApiError', async () => {
 			vi.mocked(getChannelInfo).mockRejectedValue('a plain string error');
 
 			const result = await loadChannel();
 
-			expect(result.error).toBe('Unknown error loading channel');
+			expect(result.error).toEqual({ errorCode: 'UNKNOWN_ERROR', ...GENERIC_ERROR });
 		});
 
 		it('should return error page data instead of throwing when the adapter throws', async () => {
