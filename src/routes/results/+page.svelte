@@ -4,15 +4,16 @@
 	import ErrorCard from '#lib/components/ErrorCard.svelte';
 	import ChannelResult from '#lib/components/search/ChannelResult.svelte';
 	import PlaylistResult from '#lib/components/search/PlaylistResult.svelte';
-	import type { NextPage } from '#lib/api/types.js';
-	import { getSearchResultsNextPage } from '#lib/api/search.js';
+	import type { NextPage } from '#lib/api/types.ts';
+	import { getSearchResultsNextPage } from '#lib/api/search.ts';
 	import {
 		adaptSearchResults,
 		dedupeResults,
 		type SearchResultConfig
-	} from '#lib/adapters/search.js';
+	} from '#lib/adapters/search.ts';
 	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+	import { adaptError } from '#lib/adapters/error.ts';
 
 	let { data }: { data: PageData } = $props();
 
@@ -50,7 +51,7 @@
 			items = dedupeResults([...items, ...adapted.items]);
 			nextPage = adapted.nextPage;
 		} catch (err) {
-			loadMoreError = err instanceof Error ? err.message : 'Failed to load more results';
+			loadMoreError = adaptError(err).message;
 		} finally {
 			loadingMore = false;
 		}
@@ -67,9 +68,7 @@
 
 	<!-- Error State -->
 	{#if error}
-		<ErrorCard variant="error" title="Search Error" message={error}>
-			<p class="text-secondary mt-4 text-sm">Please try again later.</p>
-		</ErrorCard>
+		<ErrorCard variant={error.variant} title={error.title} message={error.message} />
 
 		<!-- Empty Query State -->
 	{:else if !query}

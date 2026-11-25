@@ -1,8 +1,8 @@
 import { describeJsonFetcher } from '../../tests/helpers/describeJsonFetcher';
 import thumbnailFixture from '../../tests/fixtures/api/thumbnailsResponseFixture.json';
 import { getVideoThumbnails } from '#lib/api/thumbnails.js';
-import { describe, it, expect, vi } from 'vitest';
-import { createSuccessfulFetch } from '../../tests/helpers/apiHelpers';
+import { describe, it, expect } from 'vitest';
+import { createInvalidJsonBodyFetch, createSuccessfulFetch } from '../../tests/helpers/apiHelpers';
 
 describeJsonFetcher({
 	name: 'getVideoThumbnails',
@@ -21,11 +21,14 @@ describe('getVideoThumbnails selection', () => {
 		);
 	});
 
-	it('throws when the thumbnails array is empty', async () => {
-		vi.spyOn(console, 'error').mockImplementation(() => {});
-		const fetchFn = createSuccessfulFetch([]);
-		await expect(getVideoThumbnails('id1', fetchFn as never)).rejects.toThrow(
-			'No thumbnails available for video id1'
-		);
+	it.each([
+		['an empty array', () => createSuccessfulFetch([])],
+		['a body that is not an array', () => createSuccessfulFetch({ thumbnails: [] })],
+		['a body that is not JSON', () => createInvalidJsonBodyFetch()]
+	])('rejects with INVALID_RESPONSE for %s', async (_label, createFetch) => {
+		await expect(getVideoThumbnails('id1', createFetch() as never)).rejects.toMatchObject({
+			errorCode: 'INVALID_RESPONSE',
+			message: 'No thumbnails available for video id1'
+		});
 	});
 });

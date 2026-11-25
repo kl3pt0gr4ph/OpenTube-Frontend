@@ -1,5 +1,6 @@
 import { PUBLIC_API_URL } from '$app/env/public';
-import type { Image, Replies, UploadDate } from '#lib/api/types.js';
+import type { Image, Replies, UploadDate } from '#lib/api/types.ts';
+import { apiFetchJson } from '#lib/api/client.ts';
 
 const API_BASE_URL = PUBLIC_API_URL;
 
@@ -43,24 +44,9 @@ export interface RelatedCommentApiResponseItem {
 /**
  * Fetch comments for a given video ID
  */
-export async function getVideoComments(
+export function getVideoComments(
 	id: string,
 	fetchFn?: typeof globalThis.fetch
 ): Promise<CommentApiResponse | null> {
-	const fetcher = fetchFn ?? globalThis.fetch;
-
-	try {
-		const res = await fetcher(`${API_BASE_URL}/comments?id=${encodeURIComponent(id)}`);
-
-		if (!res.ok) {
-			throw new Error(`Failed to fetch comments for ${id}: ${res.status} ${res.statusText}`);
-		}
-
-		const data = await res.json();
-
-		return data;
-	} catch (error) {
-		console.error('Error fetching video comments:', error);
-		throw error;
-	}
+	return apiFetchJson(`${API_BASE_URL}/comments?id=${encodeURIComponent(id)}`, fetchFn);
 }

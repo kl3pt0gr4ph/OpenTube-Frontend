@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { ResolveOptions } from '@sveltejs/kit/hooks';
 import { handle } from './hooks.server';
-import { SECURITY_HEADERS, withSecurityHeaders } from '#lib/server/securityHeaders.js';
+import { SECURITY_HEADERS, withSecurityHeaders } from '#lib/server/securityHeaders.ts';
 
 function runHandle(response: Response) {
 	let options: ResolveOptions | undefined;
@@ -52,6 +52,7 @@ describe('handle', () => {
 	it.each([
 		['content-type', true],
 		['x-stream-type', true],
+		['x-api-error', true],
 		['set-cookie', false],
 		['server-timing', false],
 		['x-upstream-status', false]

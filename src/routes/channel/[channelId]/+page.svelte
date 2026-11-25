@@ -16,6 +16,7 @@
 	} from '#lib/adapters/channel.js';
 	import { getChannelTab, getChannelTabNextPage } from '#lib/api/channel.ts';
 	import { uniqueBy } from '#lib/utils/uniqueBy.ts';
+	import { adaptError } from '#lib/adapters/error.ts';
 	import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 	import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
 
@@ -97,10 +98,7 @@
 			});
 		} catch (err) {
 			if (channel.id !== channelId) return;
-			updateTab(tab, {
-				status: 'error',
-				error: err instanceof Error ? err.message : `Failed to load ${tab}`
-			});
+			updateTab(tab, { status: 'error', error: adaptError(err, 'channel').message });
 		}
 	}
 
@@ -125,23 +123,20 @@
 			});
 		} catch (err) {
 			if (channel.id !== channelId) return;
-			updateTab(tab, {
-				loadingMore: false,
-				error: err instanceof Error ? err.message : `Failed to load more ${tab}`
-			});
+			updateTab(tab, { loadingMore: false, error: adaptError(err, 'channel').message });
 		}
 	}
 </script>
 
 <div class="bg-primary min-h-screen w-full">
-	{#if error && !channel.name}
-		<!-- Full-page error if we couldn't load anything meaningful -->
+	{#if error}
+		<!-- The loader only sets error when the channel itself couldn't be loaded -->
 		<div class="flex min-h-screen items-center justify-center px-4">
 			<ErrorCard
-				variant="error"
-				title="Failed to Load Channel"
-				message={error}
-				showRetry={true}
+				variant={error.variant}
+				title={error.title}
+				message={error.message}
+				showRetry={error.retryable}
 				onRetry={() => window.location.reload()}
 			/>
 		</div>

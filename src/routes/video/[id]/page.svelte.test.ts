@@ -170,12 +170,18 @@ describe('+page.svelte', () => {
 				},
 				metadata: mockMetadata,
 				relatedItems: mockRelatedItems,
-				error: 'Failed to load video'
+				error: {
+					errorCode: 'UPSTREAM_BLOCKED',
+					variant: 'warning' as const,
+					title: 'YouTube is blocking this server',
+					message: 'Try again in a few minutes.',
+					retryable: true
+				}
 			};
 			const { unmount } = render(PageComponent, { data: errorData });
 
-			expect(screen.getByText('Failed to Load Video')).toBeInTheDocument();
-			expect(screen.getByText('Failed to load video')).toBeInTheDocument();
+			expect(screen.getByText('YouTube is blocking this server')).toBeInTheDocument();
+			expect(screen.getByText('Try again in a few minutes.')).toBeInTheDocument();
 			expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
 			expect(screen.queryByText('First Related Video')).not.toBeInTheDocument();
 
@@ -199,6 +205,26 @@ describe('+page.svelte', () => {
 				)
 			).toBeInTheDocument();
 		});
+
+		it('should only offer a retry when the error says one could help', () => {
+			render(PageComponent, {
+				data: {
+					playerConfig: { manifestUrl: '', duration: 0, poster: '' },
+					metadata: mockMetadata,
+					relatedItems: [],
+					error: {
+						errorCode: 'CONTENT_PRIVATE',
+						variant: 'info' as const,
+						title: 'Private video',
+						message: 'This video is private.',
+						retryable: false
+					}
+				}
+			});
+
+			expect(screen.getByText('Private video')).toBeInTheDocument();
+			expect(screen.queryByRole('button', { name: /retry/i })).not.toBeInTheDocument();
+		});
 	});
 
 	describe('Conditional rendering logic', () => {
@@ -211,7 +237,7 @@ describe('+page.svelte', () => {
 			const { unmount } = render(PageComponent, { data });
 
 			await waitFor(() => {
-				expect(screen.queryByText('Failed to Load Video')).not.toBeInTheDocument();
+				expect(screen.queryByText('Something went wrong')).not.toBeInTheDocument();
 				expect(screen.queryByText('No Streams Available')).not.toBeInTheDocument();
 			});
 
@@ -235,7 +261,13 @@ describe('+page.svelte', () => {
 				},
 				metadata: mockMetadata,
 				relatedItems: [],
-				error: 'Test error'
+				error: {
+					errorCode: 'UNKNOWN_ERROR',
+					variant: 'error' as const,
+					title: 'Something went wrong',
+					message: 'An unexpected error occurred. Try again later.',
+					retryable: true
+				}
 			};
 			render(PageComponent, { data: errorData });
 			expect(screen.queryByText(mockMetadata.title)).not.toBeInTheDocument();

@@ -1,7 +1,9 @@
 import { PUBLIC_API_URL } from '$app/env/public';
-import type { Image } from '#lib/types.js';
+import type { Image } from '#lib/types.ts';
+import { apiFetch } from '#lib/api/client.ts';
+import { invalidResponse } from '#lib/api/errors.ts';
 
-const API_BASE_URL = PUBLIC_API_URL;
+const API_BASE_URL: string = PUBLIC_API_URL;
 
 /**
  * Fetch thumbnail images for a given video ID
@@ -10,29 +12,20 @@ export async function getVideoThumbnails(
 	id: string,
 	fetchFn?: typeof globalThis.fetch
 ): Promise<Image> {
-	const fetcher = fetchFn ?? globalThis.fetch;
+	const res: Response = await apiFetch(
+		`${API_BASE_URL}/streams/thumbnails?id=${encodeURIComponent(id)}`,
+		fetchFn
+	);
+	const thumbnails: unknown = await res.json().catch((): null => null);
 
-	try {
-		const res = await fetcher(`${API_BASE_URL}/streams/thumbnails?id=${encodeURIComponent(id)}`);
+	const highQualityThumbnail: Image | undefined = Array.isArray(thumbnails)
+		? (thumbnails as Image[]).find((t: Image): boolean => t.estimatedResolutionLevel === 'HIGH') ||
+			thumbnails[thumbnails.length - 1]
+		: undefined;
 
-		if (!res.ok) {
-			throw new Error(`Failed to fetch thumbnails for ${id}: ${res.status} ${res.statusText}`);
-		}
-
-		const thumbnails: Image[] = await res.json();
-
-		const highQualityThumbnail =
-			thumbnails.find((t) => t.estimatedResolutionLevel === 'HIGH') ||
-			thumbnails[thumbnails.length - 1] ||
-			thumbnails[0];
-
-		if (!highQualityThumbnail) {
-			throw new Error(`No thumbnails available for video ${id}`);
-		}
-
-		return highQualityThumbnail;
-	} catch (error) {
-		console.error('Error fetching video thumbnails:', error);
-		throw error;
+	if (!highQualityThumbnail) {
+		throw invalidResponse(res.status, `No thumbnails available for video ${id}`);
 	}
+
+	return highQualityThumbnail;
 }

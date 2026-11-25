@@ -4,6 +4,7 @@ import Page from './+page.svelte';
 import type { PageData } from './$types';
 import searchAdaptedFixtureRaw from '../../tests/fixtures/adapters/searchAdaptedResponse.json';
 import type { SearchResultsPage } from '#lib/adapters/search.js';
+import type { ErrorConfig } from '#lib/adapters/error.ts';
 
 type Results = PageData['results'];
 const searchAdaptedFixture = searchAdaptedFixtureRaw as SearchResultsPage;
@@ -14,6 +15,14 @@ describe('+page.svelte - Search Results', () => {
 
 	const streamResults = [pilotResult, absoluteEndResult];
 	const allResults = searchAdaptedFixture.items;
+
+	const blocked: ErrorConfig = {
+		errorCode: 'UPSTREAM_BLOCKED',
+		variant: 'error',
+		title: 'YouTube is blocking this server',
+		message: 'Try again in a few minutes.',
+		retryable: true
+	};
 
 	const emptyResults: SearchResultsPage = { items: [], nextPage: null, hasNextPage: false };
 
@@ -68,16 +77,15 @@ describe('+page.svelte - Search Results', () => {
 
 	it('should show the error card, hide results, and still show the query header on error', () => {
 		const data = createMockPageData({
-			error: 'Network error occurred',
+			error: blocked,
 			query: 'test query',
 			results: withItems(allResults)
 		});
 		const { container } = render(Page, { props: { data } });
 
 		const alert = screen.getByRole('alert');
-		expect(within(alert).getByText('Search Error')).toBeTruthy();
-		expect(within(alert).getByText('Network error occurred')).toBeTruthy();
-		expect(within(alert).getByText('Please try again later.')).toBeTruthy();
+		expect(within(alert).getByText('YouTube is blocking this server')).toBeTruthy();
+		expect(within(alert).getByText('Try again in a few minutes.')).toBeTruthy();
 
 		expect(screen.getByText(/Search Results for "test query"/)).toBeTruthy();
 		expect(container.querySelector('.space-y-4')).toBeNull();
@@ -154,8 +162,8 @@ describe('+page.svelte - Search Results', () => {
 	it.each([
 		{
 			name: 'error over results',
-			data: { error: 'Test error', results: withItems(allResults) },
-			expectText: 'Test error',
+			data: { error: blocked, results: withItems(allResults) },
+			expectText: 'Try again in a few minutes.',
 			notText: 'Showing 3 results'
 		},
 		{

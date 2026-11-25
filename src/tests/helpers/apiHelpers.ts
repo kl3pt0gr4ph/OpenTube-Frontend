@@ -114,6 +114,46 @@ export function createFailedFetch(status: number, statusText: string): typeof gl
 }
 
 /**
+ * Creates a mock fetch function that fails the way NewPipeExtractorAPI does:
+ * the given status, with its error body
+ */
+export function createApiErrorFetch(
+	status: number,
+	errorCode: string,
+	message: string = 'Message from the API.'
+): MockedFunction<typeof fetch> {
+	const body = {
+		timestamp: '2026-11-17T10:30:00.123Z',
+		status,
+		error: 'Error',
+		message,
+		errorCode,
+		path: '/api/v1/test'
+	};
+	return vi.fn(
+		async (): Promise<Response> =>
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'content-type': 'application/json' }
+			})
+	) as MockedFunction<typeof fetch>;
+}
+
+/**
+ * Creates a mock fetch function whose 200 response has a body that isn't valid JSON
+ */
+export function createInvalidJsonBodyFetch(): MockedFunction<typeof fetch> {
+	return vi.fn().mockResolvedValue({
+		ok: true,
+		status: 200,
+		statusText: 'OK',
+		json: async () => {
+			throw new SyntaxError('Unexpected end of JSON input');
+		}
+	}) as MockedFunction<typeof fetch>;
+}
+
+/**
  * Creates a mock fetch function that throws a network error
  */
 export function createNetworkErrorFetch(

@@ -27,6 +27,8 @@ vi.mock('#lib/api/channel.ts', () => ({
 }));
 
 import { getChannelTab } from '#lib/api/channel.ts';
+import { ApiError } from '#lib/api/errors.ts';
+import type { ErrorConfig } from '#lib/adapters/error.ts';
 import ChannelVideos from '#lib/components/channel/ChannelVideos.svelte';
 import ChannelPlaylists from '#lib/components/channel/ChannelPlaylists.svelte';
 import ErrorCard from '#lib/components/ErrorCard.svelte';
@@ -47,6 +49,14 @@ const errorChannel: ChannelConfig = {
 	subscriberCount: '0',
 	videoCount: 0,
 	verified: false
+};
+
+const privateChannel: ErrorConfig = {
+	errorCode: 'CONTENT_PRIVATE',
+	variant: 'info',
+	title: 'Private channel',
+	message: 'This channel is private.',
+	retryable: false
 };
 
 const createPageData = (overrides: Partial<ChannelPageData> = {}): ChannelPageData => ({
@@ -112,18 +122,24 @@ describe('+page.svelte - Channel', () => {
 	});
 
 	it('should show the error and a retry button when a tab fails to load', async () => {
-		vi.mocked(getChannelTab).mockRejectedValue(new Error('Tab unavailable'));
+		vi.mocked(getChannelTab).mockRejectedValue(
+			new ApiError({ status: 503, errorCode: 'UPSTREAM_BLOCKED', message: 'Blocked.' })
+		);
 		render(Page, { props: { data: createPageData() } });
 
 		await fireEvent.click(screen.getByRole('button', { name: 'playlists' }));
 
-		expect(await screen.findByText('Tab unavailable')).toBeTruthy();
+		expect(
+			await screen.findByText(
+				'YouTube is rate-limiting requests from this server. Try again in a few minutes.'
+			)
+		).toBeTruthy();
 		expect(screen.getByRole('button', { name: 'Try again' })).toBeTruthy();
 		expect(vi.mocked(ChannelPlaylists)).not.toHaveBeenCalled();
 	});
 
-	it('should render the full-page error composition when error is set and channel name is empty', () => {
-		const data = createPageData({ channel: errorChannel, error: 'Channel not found' });
+	it('should render the full-page error card when error is set', () => {
+		const data = createPageData({ channel: errorChannel, error: privateChannel });
 
 		const { container } = render(Page, { props: { data } });
 
@@ -134,33 +150,23 @@ describe('+page.svelte - Channel', () => {
 		expect(vi.mocked(ErrorCard)).toHaveBeenCalledWith(
 			expect.anything(),
 			expect.objectContaining({
-				message: 'Channel not found',
-				title: 'Failed to Load Channel',
-				variant: 'error',
-				showRetry: true,
+				message: 'This channel is private.',
+				title: 'Private channel',
+				variant: 'info',
+				showRetry: false,
 				onRetry: expect.any(Function)
 			})
 		);
 	});
 
 	it('should reload the page when the ErrorCard retry callback is invoked', () => {
-		const data = createPageData({ channel: errorChannel, error: 'Channel not found' });
+		const data = createPageData({ channel: errorChannel, error: privateChannel });
 		render(Page, { props: { data } });
 
 		const errorCardProps = vi.mocked(ErrorCard).mock.calls[0][1] as { onRetry: () => void };
 		errorCardProps.onRetry();
 
 		expect(reloadMock).toHaveBeenCalledTimes(1);
-	});
-
-	it('should fall through to the normal branch when error is set but channel name is populated', () => {
-		const data = createPageData({ error: 'Videos unavailable' });
-
-		const { container } = render(Page, { props: { data } });
-
-		expect(screen.getByTestId('channel-details-stub')).toBeTruthy();
-		expect(container.querySelector('.flex.min-h-screen.items-center')).toBeNull();
-		expect(vi.mocked(ErrorCard)).not.toHaveBeenCalled();
 	});
 
 	it.each([

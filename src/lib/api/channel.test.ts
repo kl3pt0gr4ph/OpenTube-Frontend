@@ -69,4 +69,16 @@ describe('channel tab requests', () => {
 		expect(params.get('pageBody')).toBe(nextPage.body);
 		expect(params.getAll('pageIds')).toEqual(nextPage.ids);
 	});
+
+	it('getChannelTabNextPage sends an empty body and no ids when the cursor has neither', async () => {
+		const fetchFn = createSuccessfulFetch(channelVideosApiResponseFixture);
+		const nextPage = { url: 'https://www.youtube.com/youtubei/v1/browse' };
+
+		await getChannelTabNextPage('UCtest456', 'videos', nextPage, fetchFn as never);
+
+		const params = new URL(fetchFn.mock.calls[0][0] as string).searchParams;
+		expect(params.get('pageUrl')).toBe(nextPage.url);
+		expect(params.get('pageBody')).toBe('');
+		expect(params.getAll('pageIds')).toEqual([]);
+	});
 });

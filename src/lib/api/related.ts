@@ -1,5 +1,7 @@
 import { PUBLIC_API_URL } from '$app/env/public';
-import type { Image } from '#lib/api/types.js';
+import type { Image } from '#lib/api/types.ts';
+import { apiFetch } from '#lib/api/client.ts';
+import { invalidResponse } from '#lib/api/errors.ts';
 
 const API_BASE_URL: string = PUBLIC_API_URL;
 
@@ -36,32 +38,18 @@ export async function getRelatedStreams(
 	id: string,
 	fetchFn?: typeof globalThis.fetch
 ): Promise<RelatedItemApiResponse[]> {
-	const fetcher = fetchFn ?? globalThis.fetch;
+	const res: Response = await apiFetch(
+		`${API_BASE_URL}/streams/related?id=${encodeURIComponent(id)}`,
+		fetchFn
+	);
+	const data: unknown = await res.json().catch(() => null);
 
-	try {
-		const res = await fetcher(`${API_BASE_URL}/streams/related?id=${encodeURIComponent(id)}`);
-
-		if (!res.ok) {
-			throw new Error(`Failed to fetch related streams for ${id}: ${res.status} ${res.statusText}`);
-		}
-
-		const data = await res.json();
-
-		// Validate data exists first
-		if (!data) {
-			throw new Error('Unexpected response format for related streams');
-		}
-
-		// Handle different response formats
-		if (Array.isArray(data)) {
-			return data as RelatedItemApiResponse[];
-		} else if (data.streams && Array.isArray(data.streams)) {
-			return data.streams as RelatedItemApiResponse[];
-		} else {
-			throw new Error('Unexpected response format for related streams');
-		}
-	} catch (error) {
-		console.error('Error fetching related streams:', error);
-		throw error;
+	if (Array.isArray(data)) {
+		return data as RelatedItemApiResponse[];
 	}
+	const streams: unknown = (data as { streams?: unknown } | null)?.streams;
+	if (Array.isArray(streams)) {
+		return streams as RelatedItemApiResponse[];
+	}
+	throw invalidResponse(res.status, 'Unexpected response format for related streams');
 }

@@ -1,22 +1,20 @@
-import { getChannelInfo, getChannelVideos } from '#lib/api/channel.js';
+import { getChannelInfo, getChannelVideos } from '#lib/api/channel.ts';
 import {
 	adaptChannelInfo,
 	adaptChannelTabs,
 	adaptChannelVideos,
 	type ChannelConfig,
 	type ChannelVideoPage
-} from '#lib/adapters/channel.js';
+} from '#lib/adapters/channel.ts';
 import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 import logoPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+import { adaptError } from '#lib/adapters/error.ts';
 import { type ChannelPageData } from '../../routes/channel/[channelId]/+page';
 
 /**
  * Creates error page data with safe defaults
  */
 function createErrorPageData(error: unknown): ChannelPageData {
-	const errorMessage: string =
-		error instanceof Error ? error.message : 'Unknown error loading channel';
-
 	return {
 		channel: {
 			id: '',
@@ -32,7 +30,7 @@ function createErrorPageData(error: unknown): ChannelPageData {
 		tabs: [],
 		videos: [],
 		nextPage: null,
-		error: errorMessage
+		error: adaptError(error, 'channel')
 	};
 }
 

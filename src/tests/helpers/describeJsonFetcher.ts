@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, type MockedFunction } from 'vitest';
 import {
 	createSuccessfulFetch,
-	createFailedFetch,
+	createApiErrorFetch,
 	createNetworkErrorFetch,
 	extractQueryParams
 } from './apiHelpers';
@@ -61,23 +61,21 @@ export function describeJsonFetcher<R, T = R>(spec: JsonFetcherSpec<R, T>): void
 		});
 
 		it.each([
-			[404, 'Not Found'],
-			[503, 'Service Unavailable']
+			[404, 'CONTENT_UNAVAILABLE'],
+			[503, 'UPSTREAM_BLOCKED']
 		])(
-			'throws with id, status and statusText on HTTP %i',
-			async (status: number, statusText: string): Promise<void> => {
-				vi.spyOn(console, 'error').mockImplementation((): void => {});
-				await expect(spec.call('bad-id', createFailedFetch(status, statusText))).rejects.toThrow(
-					new RegExp(`bad-id[\\s\\S]*${status}[\\s\\S]*${statusText}`)
-				);
+			'rejects with an ApiError carrying the backend errorCode on HTTP %i',
+			async (status: number, errorCode: string): Promise<void> => {
+				await expect(
+					spec.call('bad-id', createApiErrorFetch(status, errorCode, 'From the API.'))
+				).rejects.toMatchObject({ name: 'ApiError', status, errorCode, message: 'From the API.' });
 			}
 		);
 
-		it('propagates network errors', async (): Promise<void> => {
-			vi.spyOn(console, 'error').mockImplementation((): void => {});
-			await expect(spec.call('id1', createNetworkErrorFetch('Failed to fetch'))).rejects.toThrow(
-				'Failed to fetch'
-			);
+		it('rejects with API_UNREACHABLE when no response arrives', async (): Promise<void> => {
+			await expect(
+				spec.call('id1', createNetworkErrorFetch('Failed to fetch'))
+			).rejects.toMatchObject({ name: 'ApiError', status: 0, errorCode: 'API_UNREACHABLE' });
 		});
 	});
 }
