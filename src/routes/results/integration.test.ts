@@ -1,8 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { load } from './+page';
 import searchResponseFixture from '../../tests/fixtures/api/searchApiResponse.json';
-import type { NextPage } from '#lib/api/types.js';
-import type { SearchResultConfig, VideoSearchResultConfig } from '#lib/adapters/search.js';
+import type { NextPage } from '#lib/api/types.ts';
+import type { SearchResultConfig, VideoSearchResultConfig } from '#lib/adapters/search.ts';
+import { GENERIC_ERROR, type ErrorConfig } from '#lib/adapters/error.ts';
 
 interface LoadResponse {
 	results: {
@@ -12,7 +13,7 @@ interface LoadResponse {
 	};
 	query: string;
 	sortFilter: string;
-	error: string | null;
+	error: ErrorConfig | null;
 }
 
 const okFetch = () =>
@@ -86,8 +87,13 @@ describe('results load function integration', () => {
 	});
 
 	describe('error handling', () => {
-		it('maps API errors to the search error message', async () => {
-			const fetch = vi.fn().mockResolvedValue({ ok: false, status: 404, statusText: 'Not Found' });
+		it('maps the errorCode to its error card', async () => {
+			const fetch = vi.fn(
+				async () =>
+					new Response(JSON.stringify({ errorCode: 'UPSTREAM_BLOCKED', message: 'Blocked.' }), {
+						status: 503
+					})
+			);
 			vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			const search = await runLoad(fetch, '?query=error%20test&sort=asc');
@@ -95,7 +101,19 @@ describe('results load function integration', () => {
 			expect(search.results).toEqual({ items: [], nextPage: null, hasNextPage: false });
 			expect(search.query).toBe('error test');
 			expect(search.sortFilter).toBe('asc');
-			expect(search.error).toBe('The API responded 404 Not Found.');
+			expect(search.error).toMatchObject({
+				errorCode: 'UPSTREAM_BLOCKED',
+				title: 'YouTube is blocking this server'
+			});
+		});
+
+		it('gives the generic card for an error response without an errorCode', async () => {
+			const fetch = vi.fn().mockResolvedValue({ ok: false, status: 404, statusText: 'Not Found' });
+			vi.spyOn(console, 'error').mockImplementation(() => {});
+
+			const search = await runLoad(fetch, '?query=error%20test');
+
+			expect(search.error).toEqual({ errorCode: 'UNKNOWN_ERROR', ...GENERIC_ERROR });
 		});
 
 		it.each([
@@ -109,7 +127,7 @@ describe('results load function integration', () => {
 
 			expect(search.results).toEqual({ items: [], nextPage: null, hasNextPage: false });
 			expect(search.query).toBe('network error');
-			expect(search.error).toBe("The API couldn't be reached.");
+			expect(search.error).toMatchObject({ errorCode: 'API_UNREACHABLE' });
 		});
 	});
 });

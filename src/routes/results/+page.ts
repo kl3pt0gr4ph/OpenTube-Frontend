@@ -2,6 +2,7 @@ import { getSearchResults, type SearchApiResponse } from '#lib/api/search.js';
 import { adaptSearchResults, type SearchResultsPage } from '#lib/adapters/search.js';
 import thumbnailPlaceholder from '#lib/assets/placeholders/thumbnailFallback.svg';
 import avatarPlaceholder from '#lib/assets/placeholders/logofallback.svg';
+import { adaptError, type ErrorConfig } from '#lib/adapters/error.ts';
 import type { PageLoad } from './$types';
 
 const emptyResults: SearchResultsPage = { items: [], nextPage: null, hasNextPage: false };
@@ -10,7 +11,7 @@ export interface LoadSearchResponse {
 	results: SearchResultsPage;
 	query: string;
 	sortFilter?: string;
-	error: string | null;
+	error: ErrorConfig | null;
 }
 
 export const load: PageLoad = async ({ url, fetch }): Promise<LoadSearchResponse> => {
@@ -48,7 +49,7 @@ export const load: PageLoad = async ({ url, fetch }): Promise<LoadSearchResponse
 			results: emptyResults,
 			query: url.searchParams.get('query') ?? '',
 			sortFilter: url.searchParams.get('sort') ?? 'asc',
-			error: error instanceof Error ? error.message : 'Failed to load search results'
+			error: adaptError(error)
 		};
 	}
 };
