@@ -16,8 +16,16 @@ The format is based on [keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The channel page shows only the tabs the channel has, instead of always showing Videos and Playlists. ([#120])
 - Tabs other than Videos are fetched the first time they are opened. ([#120])
 - Live and upcoming streams on the Livestreams tab are listed but can't be opened, because live playback needs HLS, which isn't supported yet. Finished streams play as normal. ([#120])
+- Live and upcoming streams on the Livestreams tab are listed but can't be opened, because live playback needs HLS, which isn't supported yet. Finished streams play as normal. ([#120])
+- When a video, channel or search fails to load, the page says why, using the API's `errorCode`: private, age-restricted, members-only, not available in the server's country, removed, YouTube blocking the server, or the API being unreachable. Any other code, including codes the API adds later, shows a generic error. ([#127])
+- The Retry button only appears when trying again could help, so it's no longer offered for a private or removed video. ([#127])
 
-[#120]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/XXX
+### Fixed
+
+- A channel that can't be loaded shows an error instead of an empty channel page titled "Error Loading Channel". ([#127])
+
+[#120]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/120
+[#127]: https://github.com/kl3pt0gr4ph/OpenTube-Frontend/pull/127
 
 ## [0.6.3] - 2026-11-13
 
