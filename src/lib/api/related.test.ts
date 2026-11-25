@@ -7,7 +7,7 @@
 import { describeJsonFetcher } from '../../tests/helpers/describeJsonFetcher';
 import relatedVideosFixture from '../../tests/fixtures/api/relatedVideosResponse.json';
 import { getRelatedStreams } from '#lib/api/related.js';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createInvalidJsonBodyFetch, createSuccessfulFetch } from '../../tests/helpers/apiHelpers';
 
 describeJsonFetcher({

@@ -1,7 +1,7 @@
 import { describeJsonFetcher } from '../../tests/helpers/describeJsonFetcher';
 import thumbnailFixture from '../../tests/fixtures/api/thumbnailsResponseFixture.json';
 import { getVideoThumbnails } from '#lib/api/thumbnails.js';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createInvalidJsonBodyFetch, createSuccessfulFetch } from '../../tests/helpers/apiHelpers';
 
 describeJsonFetcher({
