@@ -8,7 +8,7 @@ import { describeJsonFetcher } from '../../tests/helpers/describeJsonFetcher';
 import relatedVideosFixture from '../../tests/fixtures/api/relatedVideosResponse.json';
 import { getRelatedStreams } from '#lib/api/related.js';
 import { describe, it, expect, vi } from 'vitest';
-import { createSuccessfulFetch } from '../../tests/helpers/apiHelpers';
+import { createInvalidJsonBodyFetch, createSuccessfulFetch } from '../../tests/helpers/apiHelpers';
 
 describeJsonFetcher({
 	name: 'getRelatedStreams',
@@ -24,14 +24,14 @@ describe('getRelatedStreams response normalization', () => {
 	});
 
 	it.each([
-		['null body', null],
-		['object without streams', {}],
-		['streams is not an array', { streams: 'nope' }]
-	])('throws on unexpected format: %s', async (_label, body) => {
-		vi.spyOn(console, 'error').mockImplementation(() => {});
-		const fetchFn = createSuccessfulFetch(body);
-		await expect(getRelatedStreams('id1', fetchFn as never)).rejects.toThrow(
-			'Unexpected response format for related streams'
-		);
+		['null body', () => createSuccessfulFetch(null)],
+		['object without streams', () => createSuccessfulFetch({})],
+		['streams is not an array', () => createSuccessfulFetch({ streams: 'nope' })],
+		['a body that is not JSON', () => createInvalidJsonBodyFetch()]
+	])('rejects with INVALID_RESPONSE for %s', async (_label, createFetch) => {
+		await expect(getRelatedStreams('id1', createFetch() as never)).rejects.toMatchObject({
+			errorCode: 'INVALID_RESPONSE',
+			message: 'Unexpected response format for related streams'
+		});
 	});
 });

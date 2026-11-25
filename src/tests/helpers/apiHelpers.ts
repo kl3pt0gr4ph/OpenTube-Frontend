@@ -140,6 +140,20 @@ export function createApiErrorFetch(
 }
 
 /**
+ * Creates a mock fetch function whose 200 response has a body that isn't valid JSON
+ */
+export function createInvalidJsonBodyFetch(): MockedFunction<typeof fetch> {
+	return vi.fn().mockResolvedValue({
+		ok: true,
+		status: 200,
+		statusText: 'OK',
+		json: async () => {
+			throw new SyntaxError('Unexpected end of JSON input');
+		}
+	}) as MockedFunction<typeof fetch>;
+}
+
+/**
  * Creates a mock fetch function that throws a network error
  */
 export function createNetworkErrorFetch(
